@@ -50,17 +50,21 @@ def update_sense_data():
 	fails=0
 	for data in sense.get_realtime_stream():
 		try:
-			event = data
-			solar_queue.put(event['d_solar_w'])
-			use_queue.put(event['w'])
-			tqdm.write("Updated " + str(event['frame']) )
-			time.sleep(5)
+			stats = dict()
+			stats['from_grid']=data['grid_w']
+			stats['from_solar']=data['d_solar_w']
+			stats['use']=data['d_w']
+			solar_queue.put(stats)
+			use_queue.put(stats)
+			# also 'grid_w' which is how many of d_w' comes from grid, not solar
+			tqdm.write("Updated " + str(data['frame']) )
+			time.sleep(1)
 		except Exception as ex:
 			print(ex)
 
 
-def update_bar(bar, last_val, val):
-
+def update_bar(bar, last_val, val, total):
+	bar.total=total
 	if val <= 0:
 		first = -val
 		snd = -last_val
@@ -82,22 +86,22 @@ def print_solar():
 	t = tqdm(total=15000, unit="watts",miniters=1, position=1, unit_scale=True)
 	last_val=0
 	while 1:
-		val = round(solar_queue.get())
-		t=update_bar(t,last_val,val)
+		val = solar_queue.get()
+		t=update_bar(t,last_val,val['from_solar'],val['use'])
 
 		t.refresh()
-		last_val=val 
+		last_val=val['from_solar'] 
 
 def print_use():
 	global use_queue
-	t = tqdm(total=6000, unit="watts",miniters=1, position=2)
+	t = tqdm(total=15000, unit="watts",miniters=1, position=2, unit_scale=True)
 	last_val=0
 	while 1:
-		val = round(use_queue.get())
-		t=update_bar(t,last_val,val)
+		val = use_queue.get()
+		t=update_bar(t,last_val,val['use'],15000)
 
 		t.refresh()
-		last_val=val 
+		last_val=val['use'] 
 
 
 if __name__ == '__main__':	
