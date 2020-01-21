@@ -30,8 +30,9 @@ def main():
 			solar_queue.put(None)
 			use_queue.put(None)
 			exit()
-		except:
+		except Exception as ex:
 			tqdm.write("Exception encountered.")
+			print(ex)
 			continue
 
 
@@ -56,53 +57,28 @@ def update_sense_data():
 			stats['use']=data['d_w']
 			solar_queue.put(stats)
 			use_queue.put(stats)
-			# also 'grid_w' which is how many of d_w' comes from grid, not solar
-			tqdm.write("Updated " + str(data['frame']) )
 			time.sleep(1)
 		except Exception as ex:
 			print(ex)
 
-
-def update_bar(bar, last_val, val, total):
-	bar.total=total
-	if val <= 0:
-		first = -val
-		snd = -last_val
-	else:
-		first = last_val
-		snd = val
-
-	if snd > first:
-		bar.update(snd - first)
-	elif snd < first:
-		bar.update(-first)
-		bar.update(snd)
-	return bar
-
-
-
 def print_solar():
 	global solar_queue
 	t = tqdm(total=15000, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
-	last_val=0
 	while 1:
-		val = solar_queue.get()
-		#t=update_bar(t,last_val,val['from_solar'],val['use'])
+		data = solar_queue.get()
+		t.total = data['use']
 		t.reset()
-		t.update(val['from_solar'])
+		t.update(data['from_solar'])
 		t.refresh()
-		last_val=val['from_solar'] 
 
 def print_use():
 	global use_queue
-	t = tqdm(total=15000, unit="watts",miniters=1, position=2, unit_scale=True)
-	last_val=0
+	t = tqdm(total=15000, unit="watts",miniters=1, position=2, unit_scale=True, leave=True)
 	while 1:
-		val = use_queue.get()
-		t=update_bar(t,last_val,val['use'],15000)
-
+		data = use_queue.get()
+		t.reset()
+		t.update(data['use'])
 		t.refresh()
-		last_val=val['use'] 
 
 
 if __name__ == '__main__':	
