@@ -83,12 +83,13 @@ def update_bar(bar, last_val, val, total):
 
 def print_solar():
 	global solar_queue
-	t = tqdm(total=15000, unit="watts",miniters=1, position=1, unit_scale=True)
+	t = tqdm(total=15000, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
 	last_val=0
 	while 1:
 		val = solar_queue.get()
-		t=update_bar(t,last_val,val['from_solar'],val['use'])
-
+		#t=update_bar(t,last_val,val['from_solar'],val['use'])
+		t.reset()
+		t.update(val['from_solar'])
 		t.refresh()
 		last_val=val['from_solar'] 
 
