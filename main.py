@@ -6,6 +6,7 @@ import threading
 from tqdm import tqdm, trange
 
 from queue import Queue
+import leds
 
 
 def main():
@@ -79,6 +80,7 @@ def print_use():
 		t.reset()
 		t.update(data['use'])
 		t.refresh()
+
 
 
 if __name__ == '__main__':	
