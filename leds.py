@@ -36,8 +36,6 @@ def chase():
 def waterfall():
 	for x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
 		for y in range(1, 8 + 1): # 8 rows, top down
-			id = get_id_by_coordinates(x,y)
-
 			if x > 0 and x < 33:
 				pixels[get_id_by_coordinates(x,y)] = (126,126,126) # green
 			if x > 1  and x - 1 < 33:
