@@ -10,7 +10,7 @@ import time
 def get_id_by_coordinates(x,y):
 	id=0
 	if x > 32 or y > 8:
-		raise("invaliud coordinted, must be < 32:8, coordinates start top left")
+		raise BaseException("invaliud coordinted, must be < 32:8, coordinates start top left")
 	if x % 2 == 0:
 		# even rows count up from bottom
 		id=(x*8)-y
