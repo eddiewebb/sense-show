@@ -11,11 +11,11 @@ pixels = neopixel.NeoPixel(board.D18, 256)
 for i in range(0,258): # notice we go over!!
 	if i > 0 and i < 256:
 		pixels[i] = (0,255,0) # green
-	if i > 1  and i < 256:
+	if i > 1  and i-1 < 256:
 		pixels[i-1] = (255,0,0) #red
-	if i > 2  and i < 256:
+	if i > 2  and i-2 < 256:
 		pixels[i-2] = (0,0,255) #blyue
-	if i > 3  and i < 256:
+	if i > 3  and i-3 < 256:
 		pixels[i-3] = (0,0,0) #off
 	time.sleep(.01)
 
