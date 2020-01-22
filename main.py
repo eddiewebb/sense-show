@@ -47,7 +47,7 @@ def main():
 
 def draw_house():
 	for x in range(16,20):
-		for y. in reversed(range(5,9)):
+		for y in reversed(range(5,9)):
 			if x in (17,18) or y = 6:
 				leds.mark(x,y,leds.color_teal)
 
