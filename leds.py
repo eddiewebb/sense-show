@@ -56,13 +56,20 @@ def waterfall():
 def flow(start, end, rate, max_rate, color):
 	#rate is rows we fillfor x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
 	flock = math.floor((rate / max_rate) * 7) + 1
-	for x in range(start, end + 1 + flock): # 8 rows, top down, clear flock, 1 more to clear self
-		for y in reversed(range(9-flock,9)):
-			if x <= end:
-				pixels[get_id_by_coordinates(x,y)] = color # red
-			if x - 1 > 0 and x - 1 <= end:
-				pixels[get_id_by_coordinates(x-1,y)] = (0,0,0) #red
+	if end > start:
+		for x in range(start, end + 1 + flock): # 8 rows, top down, clear flock, 1 more to clear self		
+			inner_flow(x, flock, color)
+	elif end < start:
+		for x in reversed(range(start, end + 1 + flock)): # 8 rows, top down, clear flock, 1 more to clear self		
+			inner_flow(x, flock, color)
 
+
+def inner_flow(x, flock, color):	
+	for y in reversed(range(9-flock,9)):
+		if x <= end:
+			pixels[get_id_by_coordinates(x,y)] = color # red
+		if x - 1 > 0 and x - 1 <= end:
+			pixels[get_id_by_coordinates(x-1,y)] = (0,0,0) #red
 
 #startxy, ednx,y
 def mark(x,y,color):
