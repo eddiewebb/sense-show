@@ -62,4 +62,4 @@ def flow(start, end, rate, max_rate, color):
 
 # Startup
 pixels = neopixel.NeoPixel(board.D18, 256)
-flow(1,12,6000,8000)
+flow(1,12,6000,8000,color_orange)
