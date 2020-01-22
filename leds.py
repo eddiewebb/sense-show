@@ -59,17 +59,17 @@ def flow(start, end, rate, max_rate, color):
 	flock = math.floor((rate / max_rate) * 7) + 1
 	if end > start:
 		for x in range(start, end + 1 + flock): # 8 rows, top down, clear flock, 1 more to clear self		
-			inner_flow(x, flock, color, end)
+			inner_flow(x, flock, color, start, end)
 	elif end < start:
 		for x in reversed(range(end-flock, start + 1)): # 8 rows, top down, clear flock, 1 more to clear self		
-			inner_flow(x, flock, color, end, 1, operator.ge)
+			inner_flow(x, flock, color, start, end, 1, operator.ge, operator.lt)
 
 
-def inner_flow(x, flock, color, end, tail=-1, operat=operator.le):	
+def inner_flow(x, flock, color, start, end, tail=-1, operat=operator.le, operat2=operator.gt):	
 	for y in reversed(range(9-flock,9)):
 		if operat(x, end):
 			pixels[get_id_by_coordinates(x,y)] = color # red
-		if x + tail > 0 and operat(x + tail,end):
+		if operat2(x + tail, start) and operat(x + tail, end):
 			pixels[get_id_by_coordinates(x + tail,y)] = (0,0,0) #red
 
 #startxy, ednx,y
