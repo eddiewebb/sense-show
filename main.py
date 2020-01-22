@@ -81,6 +81,8 @@ def print_use():
 		t.update(data['use'])
 		t.refresh()
 
+		flow(1,12,data['use'],10000)
+
 
 
 if __name__ == '__main__':	

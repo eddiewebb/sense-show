@@ -34,8 +34,8 @@ def chase():
 	#time.sleep(.005)
 
 def waterfall():
-	for x in range(1,33): #range expects 1 over ending, i dont know
-		for y in range(1,9):
+	for x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
+		for y in range(1, 8 + 1): # 8 rows, top down
 			id = get_id_by_coordinates(x,y)
 
 			if x > 0 and x < 33:
@@ -46,6 +46,18 @@ def waterfall():
 				pixels[get_id_by_coordinates(x-2,y)] = (20,40,20) #blyue
 			if x > 3  and x - 3 < 33:
 				pixels[get_id_by_coordinates(x-3,y)] = (0,0,0) #off
+
+def flow(start, end, rate, max_rate):
+	#rate is rows we fillfor x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
+	flock = (rate / max_rate) * 8
+	for x in range(start, end + 1 + flock): # 8 rows, top down
+		flock = (rate / max_rate) * 8
+		for y in range(8,9-flock):
+			if x < 33:
+				pixels[get_id_by_coordinates(x,y)] = (126,0,0) # red
+			if x - 1 > 0 and x - 1 < 33:
+				pixels[get_id_by_coordinates(x-1,y)] = (0,0,0) #red
+
 
 
 pixels = neopixel.NeoPixel(board.D18, 256)
