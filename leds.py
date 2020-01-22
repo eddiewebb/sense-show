@@ -49,6 +49,7 @@ def flow(start, end, rate, max_rate):
 	#rate is rows we fillfor x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
 	flock = round((rate / max_rate) * 8)
 	for x in range(start, end + 1 + flock): # 8 rows, top down
+		print(x,y)
 		for y in range(8,9-flock):
 			if x < 33:
 				pixels[get_id_by_coordinates(x,y)] = (126,0,0) # red
