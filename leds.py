@@ -2,6 +2,7 @@ import board
 import neopixel
 import time
 import math
+import operator
 
 #
 #. our led is a strip essentially folded every 8 lights, zig zagging
@@ -61,14 +62,14 @@ def flow(start, end, rate, max_rate, color):
 			inner_flow(x, flock, color, end)
 	elif end < start:
 		for x in reversed(range(end-flock, start + 1)): # 8 rows, top down, clear flock, 1 more to clear self		
-			inner_flow(x, flock, color, start, 1)
+			inner_flow(x, flock, color, end, 1, operator.ge)
 
 
-def inner_flow(x, flock, color, end, tail=-1):	
+def inner_flow(x, flock, color, end, tail=-1, operat=operator.le):	
 	for y in reversed(range(9-flock,9)):
-		if x <= end:
+		if operat(x, end):
 			pixels[get_id_by_coordinates(x,y)] = color # red
-		if x + tail > 0 and x + tail <= end:
+		if x + tail > 0 and oper(x + tail,end):
 			pixels[get_id_by_coordinates(x + tail,y)] = (0,0,0) #red
 
 #startxy, ednx,y
