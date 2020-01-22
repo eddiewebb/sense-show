@@ -25,6 +25,7 @@ def get_id_by_coordinates(x,y):
 		# odd coordinates (first column, 3rd colunm, count down from top left.)
 		id=((x-1)*8)+(y-1)
 
+	return id
 
 pixels = neopixel.NeoPixel(board.D18, 256)
 for i in range(0,259): # notice we go over!!
@@ -41,6 +42,7 @@ for i in range(0,259): # notice we go over!!
 
 for x in range(1,32):
 	for y in range(1,8):
-		pixels[get_id_by_coordinates(x,y)] = (126,126,255)
+		id = get_id_by_coordinates(x,y)
 
+		pixels[id] = (126,126,255)
 
