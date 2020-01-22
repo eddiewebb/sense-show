@@ -36,7 +36,7 @@ for i in range(0,259): # notice we go over!!
 		pixels[i-2] = (0,0,255) #blyue
 	if i > 3  and i-3 < 256:
 		pixels[i-3] = (0,0,0) #off
-	time.sleep(.005)
+	#time.sleep(.005)
 
 
 for x in range(1,32):
