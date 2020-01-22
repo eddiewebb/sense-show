@@ -61,15 +61,15 @@ def flow(start, end, rate, max_rate, color):
 			inner_flow(x, flock, color, end)
 	elif end < start:
 		for x in reversed(range(end, start + 1)): # 8 rows, top down, clear flock, 1 more to clear self		
-			inner_flow(x, flock, color, start)
+			inner_flow(x, flock, color, start, True)
 
 
-def inner_flow(x, flock, color, end):	
+def inner_flow(x, flock, color, end, tail=-1):	
 	for y in reversed(range(9-flock,9)):
 		if x <= end:
 			pixels[get_id_by_coordinates(x,y)] = color # red
-		if x - 1 > 0 and x - 1 <= end:
-			pixels[get_id_by_coordinates(x-1,y)] = (0,0,0) #red
+		if x + tail > 0 and x + tail <= end:
+			pixels[get_id_by_coordinates(x + tail,y)] = (0,0,0) #red
 
 #startxy, ednx,y
 def mark(x,y,color):
