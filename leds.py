@@ -64,7 +64,7 @@ def flow(start, end, rate, max_rate, color):
 			inner_flow(x, flock, color, end)
 
 
-def inner_flow(x, flock, color):	
+def inner_flow(x, flock, color, end):	
 	for y in reversed(range(9-flock,9)):
 		if x <= end:
 			pixels[get_id_by_coordinates(x,y)] = color # red
