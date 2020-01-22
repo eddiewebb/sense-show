@@ -61,6 +61,11 @@ def flow(start, end, rate, max_rate, color):
 				pixels[get_id_by_coordinates(x-1,y)] = (0,0,0) #red
 
 
+#startxy, ednx,y
+def mark(x,y,color):
+	pixels[get_id_by_coordinates(x,y)] = color
+
+
 # Startup
 pixels = neopixel.NeoPixel(board.D18, 256)
 flow(1,12,6000,8000,color_orange)

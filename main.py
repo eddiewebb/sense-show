@@ -18,6 +18,9 @@ def main():
 	functions.append(print_solar)
 	functions.append(print_use)
 	threads = list()
+
+	draw_house()
+
 	for function in functions:
 		logging.info("Main    : create and start thread %s.", function)
 		x = threading.Thread(target=function, args=())
@@ -42,6 +45,11 @@ def main():
 		thread.join()
 		logging.info("Main    : thread %d done", index)
 
+def draw_house():
+	for x in range(16,20):
+		for y. in reversed(range(5,9)):
+			if x in (17,18) or y = 6:
+				leds.mark(x,y,leds.color_teal)
 
 def update_sense_data():
 	global use_queue, solar_queue
