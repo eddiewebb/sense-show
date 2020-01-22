@@ -7,9 +7,9 @@ import time
 # so the id at coordinates 0:0 is 0, but id at 1:0 (2nd column, first row) is 15 !
 #
 
-
-pixels = neopixel.NeoPixel(board.D18, 256)
-waterfall()
+def __init__():
+	pixels = neopixel.NeoPixel(board.D18, 256)
+	waterfall()
 
 def get_id_by_coordinates(x,y):
 	id=0
