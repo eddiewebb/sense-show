@@ -47,7 +47,7 @@ def waterfall():
 
 def flow(start, end, rate, max_rate):
 	#rate is rows we fillfor x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
-	flock = (rate / max_rate) * 8
+	flock = round((rate / max_rate) * 8)
 	for x in range(start, end + 1 + flock): # 8 rows, top down
 		flock = (rate / max_rate) * 8
 		for y in range(8,9-flock):
