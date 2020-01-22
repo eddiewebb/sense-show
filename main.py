@@ -71,6 +71,10 @@ def print_solar():
 		t.reset()
 		t.update(data['from_solar'])
 		t.refresh()
+		if data['from_solar'] > 0:
+			leds.flow(20,30,-data['from_solar'],15000)
+		elif data['from_solar'] < 0:
+			leds.flow(30,20,data['from_solar'],15000)
 
 def print_use():
 	global use_queue
@@ -80,7 +84,7 @@ def print_use():
 		t.reset()
 		t.update(data['use'])
 		t.refresh()
-		leds.flow(1,12,data['use'],10000)
+		leds.flow(5,15,data['use'],10000)
 
 
 
