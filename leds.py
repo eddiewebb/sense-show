@@ -7,6 +7,7 @@ import time
 # so the id at coordinates 0:0 is 0, but id at 1:0 (2nd column, first row) is 15 !
 #
 
+off=(0,0,0)
 color_green=(0,80,0)
 color_orange=(80,40,0)
 color_teal=(0,80,80)

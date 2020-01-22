@@ -47,6 +47,14 @@ def main():
 		thread.join()
 		logging.info("Main    : thread %d done", index)
 
+def show_sun(yes):	
+	if yes:
+		color = leds.color_orange
+	else:
+		color = leds.off
+	leds.mark(32,1, color)
+	leds.mark(32,2, color)
+
 def draw_house():
 	for x in range(16,20):
 		for y in reversed(range(5,9)):
@@ -98,8 +106,10 @@ def print_solar():
 		t.update(data['from_solar'])
 		t.refresh()
 		if data['from_solar'] < 0:
+			show_sun(False)
 			leds.flow(19,29,-data['from_solar'],80,leds.color_green)
 		elif data['from_solar'] > 0:
+			show_sun(True)
 			leds.flow(29,19,data['from_solar'],15000,leds.color_orange)
 
 def print_use():
