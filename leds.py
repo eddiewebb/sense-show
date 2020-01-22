@@ -8,7 +8,8 @@ import time
 #
 
 color_green=(0,255,0)
-color_orange=(0,126,126)
+color_orange=(255,126,0)
+color_teal=(0,126,126)
 color_red=(255,0,0)
 
 def get_id_by_coordinates(x,y):
