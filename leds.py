@@ -11,6 +11,7 @@ color_green=(0,80,0)
 color_orange=(80,40,0)
 color_teal=(0,80,80)
 color_red=(80,0,0)
+color_purple=(128,0,128)
 
 def get_id_by_coordinates(x,y):
 	id=0

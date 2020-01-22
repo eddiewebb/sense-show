@@ -20,6 +20,8 @@ def main():
 	threads = list()
 
 	draw_house()
+	draw_panels()
+	draw_grid()
 
 	for function in functions:
 		logging.info("Main    : create and start thread %s.", function)
@@ -51,6 +53,22 @@ def draw_house():
 			if x in (17,18) or y == 6:
 				leds.mark(x,y,leds.color_teal)
 
+def draw_panels():
+	for x in range(30,33):
+		for y in reversed(range(1,9)):
+			if x in (30) and y < 5:
+				leds.mark(x,y,leds.color_teal)
+			if x in (31) and y in (3,4,5,6):
+				leds.mark(x,y,leds.color_teal)
+			if x in (32) and y in (5,6,7,8):
+				leds.mark(x,y,leds.color_teal)
+
+def draw_grid():
+	for x in range(1,4):
+		for y in reversed(range(4,9)):
+			if x in (17,18) or y in (4,6):
+				leds.mark(x,y,leds.color_purple)
+
 def update_sense_data():
 	global use_queue, solar_queue
 	user = os.getenv("SENSE_USER")
@@ -80,9 +98,9 @@ def print_solar():
 		t.update(data['from_solar'])
 		t.refresh()
 		if data['from_solar'] < 0:
-			leds.flow(20,30,-data['from_solar'],80,leds.color_orange)
+			leds.flow(19,29,-data['from_solar'],80,leds.color_green)
 		elif data['from_solar'] > 0:
-			leds.flow(30,20,data['from_solar'],15000,leds.color_green)
+			leds.flow(29,19,data['from_solar'],15000,leds.color_orange)
 
 def print_use():
 	global use_queue
@@ -92,7 +110,7 @@ def print_use():
 		t.reset()
 		t.update(data['use'])
 		t.refresh()
-		leds.flow(5,15,data['use'],8000, leds.color_red)
+		leds.flow(4,14,data['use'],8000, leds.color_red)
 
 
 
