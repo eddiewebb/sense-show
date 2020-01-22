@@ -110,7 +110,7 @@ def print_solar():
 			leds.flow(19,29,-data['from_solar'],80,leds.color_green)
 		elif data['from_solar'] > 0:
 			show_sun(True)
-			leds.flow(29,19,data['from_solar'],15000,leds.color_orange)
+			leds.flow(29,19,data['from_solar'],10000,leds.color_orange)
 
 def print_use():
 	global use_queue
