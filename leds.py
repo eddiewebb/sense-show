@@ -37,12 +37,11 @@ def waterfall():
 	for x in range(1,33): #range expects 1 over ending, i dont know
 		for y in range(1,9):
 			id = get_id_by_coordinates(x,y)
-			pixels[id] = get_color(id)
 
 			if x > 0 and x < 33:
 				pixels[get_id_by_coordinates(x,y)] = (126,126,126) # green
 			if x > 1  and x - 1 < 33:
-				pixels[get_id_by_coordinates(x-1,y)] = (66,100,66) #red
+				pixels[get_id_by_coordinates(x-1,y)] = (60,100,60) #red
 			if x > 2  and x - 2 < 33:
 				pixels[get_id_by_coordinates(x-2,y)] = (20,40,20) #blyue
 			if x > 3  and x - 3 < 33:
