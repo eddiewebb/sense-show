@@ -56,9 +56,9 @@ def show_sun(yes):
 	leds.mark(32,2, color)
 
 def draw_house():
-	for x in range(16,20):
+	for x in range(15,19):
 		for y in reversed(range(5,9)):
-			if x in (17,18) or y == 6:
+			if x in (16,17) or y == 6:
 				leds.mark(x,y,leds.color_teal)
 
 def draw_panels():
@@ -107,7 +107,7 @@ def print_solar():
 		t.refresh()
 		if data['from_solar'] < 0:
 			show_sun(False)
-			leds.flow(19,29,-data['from_solar'],80,leds.color_green)
+			leds.flow(19,29,-data['from_solar'],320,leds.color_red)
 		elif data['from_solar'] > 0:
 			show_sun(True)
 			leds.flow(29,19,data['from_solar'],10000,leds.color_orange)
