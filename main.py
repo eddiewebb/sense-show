@@ -56,11 +56,11 @@ def draw_house():
 def draw_panels():
 	for x in range(30,33):
 		for y in reversed(range(1,9)):
-			if x in (30) and y < 5:
+			if x == 30 and y < 5:
 				leds.mark(x,y,leds.color_teal)
-			if x in (31) and y in (3,4,5,6):
+			if x == 31 and y in (3,4,5,6):
 				leds.mark(x,y,leds.color_teal)
-			if x in (32) and y in (5,6,7,8):
+			if x == 32 and y in (5,6,7,8):
 				leds.mark(x,y,leds.color_teal)
 
 def draw_grid():
