@@ -7,6 +7,10 @@ import time
 # so the id at coordinates 0:0 is 0, but id at 1:0 (2nd column, first row) is 15 !
 #
 
+color_green=(0,255,0)
+color_orange=(0,126,126)
+color_red=(255,0,0)
+
 def get_id_by_coordinates(x,y):
 	id=0
 	if x > 32 or y > 8:
@@ -45,13 +49,13 @@ def waterfall():
 			if x > 3  and x - 3 < 33:
 				pixels[get_id_by_coordinates(x-3,y)] = (0,0,0) #off
 
-def flow(start, end, rate, max_rate):
+def flow(start, end, rate, max_rate, color):
 	#rate is rows we fillfor x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
 	flock = round((rate / max_rate) * 8)
 	for x in range(start, end + 1 + flock): # 8 rows, top down, clear flock, 1 more to clear self
 		for y in reversed(range(9-flock,9)):
 			if x <= end:
-				pixels[get_id_by_coordinates(x,y)] = (126,0,0) # red
+				pixels[get_id_by_coordinates(x,y)] = color # red
 			if x - 1 > 0 and x - 1 <= end:
 				pixels[get_id_by_coordinates(x-1,y)] = (0,0,0) #red
 
