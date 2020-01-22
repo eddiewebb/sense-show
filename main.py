@@ -81,7 +81,7 @@ def print_use():
 		t.update(data['use'])
 		t.refresh()
 
-		flow(1,12,data['use'],10000)
+		leds.flow(1,12,data['use'],10000)
 
 
 

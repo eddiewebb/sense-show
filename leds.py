@@ -57,6 +57,6 @@ def flow(start, end, rate, max_rate):
 				pixels[get_id_by_coordinates(x-1,y)] = (0,0,0) #red
 
 
-
+# Startup
 pixels = neopixel.NeoPixel(board.D18, 256)
-waterfall()
+flow(1,12,6000,8000)
