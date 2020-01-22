@@ -40,5 +40,5 @@ def waterfall():
 			pixels[id] = (126,126,255)
 
 
-	pixels = neopixel.NeoPixel(board.D18, 256)
-	waterfall()
+pixels = neopixel.NeoPixel(board.D18, 256)
+waterfall()
