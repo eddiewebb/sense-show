@@ -7,10 +7,10 @@ import time
 # so the id at coordinates 0:0 is 0, but id at 1:0 (2nd column, first row) is 15 !
 #
 
-color_green=(0,255,0)
-color_orange=(255,126,0)
-color_teal=(0,126,126)
-color_red=(255,0,0)
+color_green=(0,80,0)
+color_orange=(80,40,0)
+color_teal=(0,80,80)
+color_red=(80,0,0)
 
 def get_id_by_coordinates(x,y):
 	id=0
