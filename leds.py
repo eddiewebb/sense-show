@@ -50,8 +50,6 @@ def flow(start, end, rate, max_rate):
 	flock = round((rate / max_rate) * 8)
 	for x in range(start, end + 1 + flock): # 8 rows, top down, clear flock, 1 more to clear self
 		for y in reversed(range(9-flock,8)):
-
-			print(x,y)
 			if x <= end:
 				pixels[get_id_by_coordinates(x,y)] = (126,0,0) # red
 			if x - 1 > 0 and x - 1 <= end:

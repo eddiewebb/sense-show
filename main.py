@@ -80,7 +80,6 @@ def print_use():
 		t.reset()
 		t.update(data['use'])
 		t.refresh()
-
 		leds.flow(1,12,data['use'],10000)
 
 
