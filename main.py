@@ -66,7 +66,7 @@ def draw_panels():
 def draw_grid():
 	for x in range(1,4):
 		for y in reversed(range(4,9)):
-			if x in (17,18) or y in (4,6):
+			if x ==2 or y in (4,6):
 				leds.mark(x,y,leds.color_purple)
 
 def update_sense_data():
