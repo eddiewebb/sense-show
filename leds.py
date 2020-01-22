@@ -61,7 +61,7 @@ def flow(start, end, rate, max_rate, color):
 			inner_flow(x, flock, color, end)
 	elif end < start:
 		for x in reversed(range(end, start + 1)): # 8 rows, top down, clear flock, 1 more to clear self		
-			inner_flow(x, flock, color, end)
+			inner_flow(x, flock, color, start)
 
 
 def inner_flow(x, flock, color, end):	
