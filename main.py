@@ -9,6 +9,12 @@ from queue import Queue
 import leds
 
 
+max_solar 	   = 10000
+max_solar_draw = 300
+max_use   	   = 10000
+flip_iterations= 5
+
+
 def main():
 	global solar_queue, use_queue
 
@@ -90,6 +96,9 @@ def update_sense_data():
 			stats['from_grid']=data['grid_w']
 			stats['from_solar']=data['d_solar_w']
 			stats['use']=data['d_w']
+			qDepth = solar_queue.qsize() + use_queue.qsize()
+			if qDepth > 0:
+				tqdm.write("Queuedepth: " + str(qDepth))
 			solar_queue.put(stats)
 			use_queue.put(stats)
 			time.sleep(1)
@@ -97,30 +106,48 @@ def update_sense_data():
 			print(ex)
 
 def print_solar():
+	viz_flipper=0
 	global solar_queue
-	t = tqdm(total=15000, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
+	t = tqdm(total=max_solar, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
 	while 1:
+		while solar_queue.qsize() > 1:
+			solar_queue.get()
+			solar_queue.task_done()
+			tqdm.write("solar discard")
 		data = solar_queue.get()
 		t.total = data['use']
 		t.reset()
 		t.update(data['from_solar'])
 		t.refresh()
-		if data['from_solar'] < 0:
-			show_sun(False)
-			leds.flow(19,29,-data['from_solar'],320,leds.color_red)
-		elif data['from_solar'] > 0:
-			show_sun(True)
-			leds.flow(29,19,data['from_solar'],10000,leds.color_orange)
+		viz_flipper += 1
+		if True: #viz_flipper <= flip_iterations:
+			if data['from_solar'] < 0:
+				show_sun(False)
+				leds.flow(19,29,-data['from_solar'],max_solar_draw,leds.color_red)
+			elif data['from_solar'] > 0:
+				show_sun(True)
+				leds.flow(29,19,data['from_solar'],max_solar,leds.color_orange)
+		else:
+			tqdm.write(str(data['from_solar']))
+			#leds.display(data['from_solar'], 19)
+		if viz_flipper > 9:
+			viz_flipper = 0
+		solar_queue.task_done()
 
 def print_use():
 	global use_queue
-	t = tqdm(total=15000, unit="watts",miniters=1, position=2, unit_scale=True, leave=True)
+	t = tqdm(total=max_use, unit="watts",miniters=1, position=2, unit_scale=True, leave=True)
 	while 1:
+		while use_queue.qsize() > 1:
+			use_queue.get()
+			use_queue.task_done()
+			tqdm.write("use discard")
 		data = use_queue.get()
 		t.reset()
 		t.update(data['use'])
 		t.refresh()
-		leds.flow(4,14,data['use'],8000, leds.color_red)
+		leds.flow(4,14,data['use'],max_use, leds.color_red)
+		use_queue.task_done()
 
 
 

@@ -25,6 +25,8 @@ color_teal=(0,80,80)
 color_red=(80,0,0)
 color_purple=(128,0,128)
 
+
+
 def get_id_by_coordinates(x,y):
 	id=0
 	if x > 32 or y > 8:
@@ -84,6 +86,7 @@ def inner_flow(x, flock, color, start, end, tail=-1, operat=operator.le, operat2
 #startxy, ednx,y
 def mark(x,y,color):
 	pixels[get_id_by_coordinates(x,y)] = color
+
 
 
 # Startup
