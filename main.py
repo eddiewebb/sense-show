@@ -12,7 +12,7 @@ import leds
 
 max_solar 	   = 2000
 max_solar_draw = 300
-max_use   	   = 10000
+max_use   	   = 15000
 flip_iterations= 5
 
 
