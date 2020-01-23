@@ -92,15 +92,12 @@ def update_sense_data():
 	fails=0
 	for data in sense.get_realtime_stream():
 		try:
-			stats = dict()
-			stats['from_grid']=data['grid_w']
-			stats['from_solar']=data['d_solar_w']
-			stats['use']=data['d_w']
+			tqdm.write("Latest: {}".format(time.ctime(data['epoch'])))
 			qDepth = solar_queue.qsize() + use_queue.qsize()
 			if qDepth > 0:
 				tqdm.write("Queuedepth: " + str(qDepth))
-			solar_queue.put(stats)
-			use_queue.put(stats)
+			solar_queue.put(data)
+			use_queue.put(data)
 			time.sleep(1)
 		except Exception as ex:
 			print(ex)
@@ -111,24 +108,24 @@ def print_solar():
 	t = tqdm(total=max_solar, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
 	while 1:
 		while solar_queue.qsize() > 1:
-			solar_queue.get()
+			trash = solar_queue.get()
 			solar_queue.task_done()
-			tqdm.write("solar discard")
+			tqdm.write("solar discard e:{}, solar:{}, use:{}".format(trash['ecpoch'], trash['d_solar_w'],trash['grid_w']))
 		data = solar_queue.get()
-		t.total = data['use']
+		t.total = data['d_w']
 		t.reset()
-		t.update(data['from_solar'])
+		t.update(data['d_solar_w'])
 		t.refresh()
 		viz_flipper += 1
 		if True: #viz_flipper <= flip_iterations:
-			if data['from_solar'] < 0:
+			if data['d_solar_w'] < 0:
 				show_sun(False)
-				leds.flow(19,29,-data['from_solar'],max_solar_draw,leds.color_red)
-			elif data['from_solar'] > 0:
+				leds.flow(19,29,-data['d_solar_w'],max_solar_draw,leds.color_red)
+			elif data['d_solar_w'] > 0:
 				show_sun(True)
-				leds.flow(29,19,data['from_solar'],max_solar,leds.color_orange)
+				leds.flow(29,19,data['d_solar_w'],max_solar,leds.color_orange)
 		else:
-			tqdm.write(str(data['from_solar']))
+			tqdm.write(str(data['d_solar_w']))
 			#leds.display(data['from_solar'], 19)
 		if viz_flipper > 9:
 			viz_flipper = 0
@@ -144,9 +141,9 @@ def print_use():
 			tqdm.write("use discard")
 		data = use_queue.get()
 		t.reset()
-		t.update(data['use'])
+		t.update(data['d_w'])
 		t.refresh()
-		leds.flow(4,14,data['use'],max_use, leds.color_red)
+		leds.flow(4,14,data['d_w'],max_use, leds.color_red)
 		use_queue.task_done()
 
 
