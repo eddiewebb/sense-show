@@ -110,7 +110,7 @@ def print_solar():
 		while solar_queue.qsize() > 1:
 			trash = solar_queue.get()
 			solar_queue.task_done()
-			tqdm.write("solar discard e:{}, solar:{}, use:{}".format(trash['ecpoch'], trash['d_solar_w'],trash['grid_w']))
+			tqdm.write("solar discard e:{}, solar:{}, use:{}".format(trash['epoch'], trash['d_solar_w'],trash['grid_w']))
 		data = solar_queue.get()
 		t.total = data['d_w']
 		t.reset()
