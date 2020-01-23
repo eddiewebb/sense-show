@@ -84,7 +84,7 @@ def inner_flow(x, flock, color, start, end, tail=-1, operat=operator.le, operat2
 	for y in reversed(range(9-flock,9)):
 		if operat(x, end):
 			pixels[get_id_by_coordinates(x,y)] = color # red
-		if operat2(x + tail*flock, start) and operat(x + tail, end):
+		if operat2(x + tail*flock, start) and operat(x + tail*flock, end):
 			pixels[get_id_by_coordinates(x + tail*flock,y)] = (0,0,0) #red
 	pixels.show()
 

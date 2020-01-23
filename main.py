@@ -67,7 +67,7 @@ def update_sense_data():
 	while True:
 		try:
 			data = sense.get_realtime()
-			#tqdm.write("Latest: {}".format(time.ctime(data['epoch'])))
+			tqdm.write("Latest: {}".format(time.ctime(data['epoch'])))
 			#qDepth = solar_queue.qsize() + use_queue.qsize()
 			#if qDepth > 0:
 			#	tqdm.write("Queuedepth: " + str(qDepth))
