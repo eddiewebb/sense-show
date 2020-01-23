@@ -6,6 +6,7 @@ import threading
 from tqdm import tqdm, trange
 
 from queue import Queue
+from collections import deque
 import leds
 
 
@@ -89,9 +90,13 @@ def update_sense_data():
 	passwd = os.getenv("SENSE_PASSWD")	
 	sense = sense_energy.Senseable()
 	sense.authenticate(user,passwd)
+	sense.rate_limit=10
 	fails=0
-	for data in sense.get_realtime_stream():
+	sense.update_realtime()
+	iterations=0
+	while True:
 		try:
+			data = sense.get_realtime()
 			tqdm.write("Latest: {}".format(time.ctime(data['epoch'])))
 			qDepth = solar_queue.qsize() + use_queue.qsize()
 			if qDepth > 0:
@@ -101,6 +106,7 @@ def update_sense_data():
 			time.sleep(1)
 		except Exception as ex:
 			print(ex)
+		sense.update_realtime()
 
 def print_solar():
 	viz_flipper=0
