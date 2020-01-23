@@ -2,15 +2,16 @@ import os
 import time
 import math
 import operator
+import mock_pixels
 
 
 
 if os.getenv("SENSE_TEST"):
-	pixels = [None] * 256
+	pixels = mock_pixels.Pixels(256)
 else:
 	import board
 	import neopixel
-	pixels = neopixel.NeoPixel(board.D18, 256)
+	pixels = neopixel.NeoPixel(board.D18, 256, auto_write=False, brightness=0.5)
 
 
 #
@@ -49,6 +50,8 @@ def chase():
 			pixels[i-2] = (0,0,255) #blyue
 		if i > 3  and i-3 < 256:
 			pixels[i-3] = (0,0,0) #off
+		pixels.show()
+
 
 
 	#time.sleep(.005)
@@ -64,6 +67,7 @@ def waterfall():
 				pixels[get_id_by_coordinates(x-2,y)] = (20,40,20) #blyue
 			if x > 3  and x - 3 < 33:
 				pixels[get_id_by_coordinates(x-3,y)] = (0,0,0) #off
+		pixels.show()	
 
 def flow(start, end, rate, max_rate, color):
 	#rate is rows we fillfor x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
@@ -82,11 +86,45 @@ def inner_flow(x, flock, color, start, end, tail=-1, operat=operator.le, operat2
 			pixels[get_id_by_coordinates(x,y)] = color # red
 		if operat2(x + tail, start) and operat(x + tail, end):
 			pixels[get_id_by_coordinates(x + tail,y)] = (0,0,0) #red
+	pixels.show()
 
 #startxy, ednx,y
 def mark(x,y,color):
 	pixels[get_id_by_coordinates(x,y)] = color
 
+def show_sun(yes):	
+	if yes:
+		color = color_orange
+	else:
+		color = off
+	mark(32,1, color)
+	mark(32,2, color)
+	pixels.show()
+
+def draw_house():
+	for x in range(15,19):
+		for y in reversed(range(5,9)):
+			if x in (16,17) or y == 6:
+				mark(x,y,color_teal)
+	pixels.show()
+
+def draw_panels():
+	for x in range(30,33):
+		for y in reversed(range(1,9)):
+			if x == 30 and y < 5:
+				mark(x,y,color_teal)
+			if x == 31 and y in (3,4,5,6):
+				mark(x,y,color_teal)
+			if x == 32 and y in (5,6,7,8):
+				mark(x,y,color_teal)
+	pixels.show()
+
+def draw_grid():
+	for x in range(1,4):
+		for y in reversed(range(4,9)):
+			if x ==2 or y in (4,6):
+				mark(x,y,color_purple)
+	pixels.show()
 
 
 # Startup

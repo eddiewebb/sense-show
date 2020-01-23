@@ -26,9 +26,9 @@ def main():
 	functions.append(print_use)
 	threads = list()
 
-	draw_house()
-	draw_panels()
-	draw_grid()
+	leds.draw_house()
+	leds.draw_panels()
+	leds.draw_grid()
 
 	for function in functions:
 		logging.info("Main    : create and start thread %s.", function)
@@ -54,35 +54,6 @@ def main():
 		thread.join()
 		logging.info("Main    : thread %d done", index)
 
-def show_sun(yes):	
-	if yes:
-		color = leds.color_orange
-	else:
-		color = leds.off
-	leds.mark(32,1, color)
-	leds.mark(32,2, color)
-
-def draw_house():
-	for x in range(15,19):
-		for y in reversed(range(5,9)):
-			if x in (16,17) or y == 6:
-				leds.mark(x,y,leds.color_teal)
-
-def draw_panels():
-	for x in range(30,33):
-		for y in reversed(range(1,9)):
-			if x == 30 and y < 5:
-				leds.mark(x,y,leds.color_teal)
-			if x == 31 and y in (3,4,5,6):
-				leds.mark(x,y,leds.color_teal)
-			if x == 32 and y in (5,6,7,8):
-				leds.mark(x,y,leds.color_teal)
-
-def draw_grid():
-	for x in range(1,4):
-		for y in reversed(range(4,9)):
-			if x ==2 or y in (4,6):
-				leds.mark(x,y,leds.color_purple)
 
 def update_sense_data():
 	global use_queue, solar_queue
@@ -91,22 +62,21 @@ def update_sense_data():
 	sense = sense_energy.Senseable()
 	sense.authenticate(user,passwd)
 	sense.rate_limit=10
-	fails=0
 	sense.update_realtime()
 	iterations=0
 	while True:
 		try:
 			data = sense.get_realtime()
-			tqdm.write("Latest: {}".format(time.ctime(data['epoch'])))
-			qDepth = solar_queue.qsize() + use_queue.qsize()
-			if qDepth > 0:
-				tqdm.write("Queuedepth: " + str(qDepth))
+			#tqdm.write("Latest: {}".format(time.ctime(data['epoch'])))
+			#qDepth = solar_queue.qsize() + use_queue.qsize()
+			#if qDepth > 0:
+			#	tqdm.write("Queuedepth: " + str(qDepth))
 			solar_queue.put(data)
 			use_queue.put(data)
-			time.sleep(1)
 		except Exception as ex:
 			print(ex)
 		sense.update_realtime()
+		time.sleep(1)
 
 def print_solar():
 	viz_flipper=0
@@ -125,10 +95,10 @@ def print_solar():
 		viz_flipper += 1
 		if True: #viz_flipper <= flip_iterations:
 			if data['d_solar_w'] < 0:
-				show_sun(False)
+				leds.show_sun(False)
 				leds.flow(19,29,-data['d_solar_w'],max_solar_draw,leds.color_red)
 			elif data['d_solar_w'] > 0:
-				show_sun(True)
+				leds.show_sun(True)
 				leds.flow(29,19,data['d_solar_w'],max_solar,leds.color_orange)
 		else:
 			tqdm.write(str(data['d_solar_w']))
