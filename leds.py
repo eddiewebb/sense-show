@@ -1,8 +1,17 @@
-import board
-import neopixel
+import os
 import time
 import math
 import operator
+
+
+
+if os.getenv("SENSE_TEST"):
+	pixels = [None] * 256
+else:
+	import board
+	import neopixel
+	pixels = neopixel.NeoPixel(board.D18, 256)
+
 
 #
 #. our led is a strip essentially folded every 8 lights, zig zagging
@@ -78,5 +87,4 @@ def mark(x,y,color):
 
 
 # Startup
-pixels = neopixel.NeoPixel(board.D18, 256)
 flow(1,12,6000,8000,color_orange)
