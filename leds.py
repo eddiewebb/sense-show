@@ -84,11 +84,15 @@ def inner_flow(x, flock, color, start, end, tail=-1, operat=operator.le, operat2
 	for y in reversed(range(9-flock,9)):
 		if operat(x, end):
 			pixels[get_id_by_coordinates(x,y)] = color # red
-		if operat2(x + tail, start) and operat(x + tail, end):
-			pixels[get_id_by_coordinates(x + tail,y)] = (0,0,0) #red
+		if operat2(x + tail*flock, start) and operat(x + tail, end):
+			pixels[get_id_by_coordinates(x + tail*flock,y)] = (0,0,0) #red
 	pixels.show()
 
-#startxy, ednx,y
+"""
+Set certain LED positions to status.
+
+Must call leds.flush() or pixels.show() after all leds are marked!
+"""
 def mark(x,y,color):
 	pixels[get_id_by_coordinates(x,y)] = color
 
@@ -126,6 +130,8 @@ def draw_grid():
 				mark(x,y,color_purple)
 	pixels.show()
 
+def flush():
+	pixels.show()
 
 # Startup
 flow(1,12,6000,8000,color_orange)
