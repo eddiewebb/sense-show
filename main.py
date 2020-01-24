@@ -45,10 +45,16 @@ def launchAndWait():
 	global led_panel, abort_threads, threads
 
 	log.info("Launching threads")
-
-	halt_threads() #wait for all previous threads to die
-	abort_threads = False #let new ones run
 	
+	#wait for all previous threads to die
+	halt_threads() 
+	abort_threads = False #let new ones run
+	# discard any poison pills our led will try to eat
+	while data_queue.qsize() > 0:
+		data_queue.get()
+		data_queue.task_done()
+	
+	# start brand new!
 	led_panel = led_strip.LedStrip()
 	led_panel.draw_house()
 	led_panel.draw_panels()
@@ -111,11 +117,13 @@ def update_sense_data():
 		time.sleep(1)
 
 def update_led_panel():
+	log.debug("led function")
 	global data_queue, led_panel
 	solar = tqdm(total=max_solar, unit="watts",desc="From Solar", miniters=1, position=0, unit_scale=True, leave=True)
 	use = tqdm(total=max_use, unit="watts",desc="Consumption",miniters=1, position=1, unit_scale=True, leave=True)
 	grid = tqdm(total=max_use, unit="watts",desc="From Grid",miniters=1, position=2, unit_scale=True, leave=True)
 	while True:
+		log.debug("led loop")
 		global abort_threads
 		if abort_threads:
 			log.info("Abort threads true, exiting LED loop")
@@ -123,12 +131,14 @@ def update_led_panel():
 		while data_queue.qsize() > 5:
 			data_queue.get()
 			data_queue.task_done()
-			tqdm.write("solar discard")
-		data = data_queue.get( )
-		# Primary thread will send None when to kill
+			log.info("solar discard")
+		data = data_queue.get()
 		if data == None:
-			return
-
+			#we're being asked to shutdwn
+			log.info("poison pill in queue, exiting LED thread")
+			break
+		else:
+			log.debug("new dtata to show")
 		# Set console indicators	
 		set_tqdm(solar,data['d_solar_w'])
 		set_tqdm(use,data['d_w'])
