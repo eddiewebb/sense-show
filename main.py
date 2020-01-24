@@ -14,8 +14,12 @@ import leds
 max_solar 	   = 8000
 max_use   	   = 15000
 flip_iterations= 5
-log 		   = logging.getLogger('senseshow.main')
 keep_running   = True
+
+
+
+logging.basicConfig(filename='/var/log/sense-debug.log',level=logging.DEBUG)
+log = logging.getLogger('senseshow.main')
 
 def main():
 	signal.signal(signal.SIGINT, exit_gracefully)
@@ -45,7 +49,7 @@ def main():
 		except KeyboardInterrupt:
 			exit_gracefully()
 		except Exception as ex:
-			tqdm.write("Exception encountered.")
+			log.error("Exception encountered.")
 			print(ex)
 			continue
 
@@ -75,20 +79,15 @@ def update_sense_data():
 	sense = sense_energy.Senseable()
 	sense.authenticate(user,passwd)
 	sense.rate_limit=10
-	sense.update_realtime()
-	iterations=0
 	while keep_running:
-		try:
-			data = sense.get_realtime()
-			log.debug("Latest Data From: {}".format(time.ctime(data['epoch'])))
-			#qDepth = solar_queue.qsize() + use_queue.qsize()
-			#if qDepth > 0:
-			#	tqdm.write("Queuedepth: " + str(qDepth))
-			solar_queue.put(data)
-			use_queue.put(data)
-		except Exception as ex:
-			print(ex)
 		sense.update_realtime()
+		data = sense.get_realtime()
+		log.debug("Latest Data From: {}".format(time.ctime(data['epoch'])))
+		#qDepth = solar_queue.qsize() + use_queue.qsize()
+		#if qDepth > 0:
+		#	tqdm.write("Queuedepth: " + str(qDepth))
+		solar_queue.put(data)
+		use_queue.put(data)
 		time.sleep(1)
 
 def print_solar():

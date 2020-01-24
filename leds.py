@@ -137,4 +137,4 @@ def clear():
 	pixels.fill((0,0,0))
 
 # Startup
-flow(1,12,6000,8000,color_orange)
+flow(1,32,8000,8000,color_orange)
