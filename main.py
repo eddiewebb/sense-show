@@ -42,6 +42,7 @@ def main():
 		except KeyboardInterrupt:
 			solar_queue.put(None)
 			use_queue.put(None)
+			leds.clear()
 			exit()
 		except Exception as ex:
 			tqdm.write("Exception encountered.")

@@ -15,3 +15,6 @@ class Pixels(_pixelbuf.PixelBuf):
 		The colors may or may not be showing after this function returns because
 		it may be done asynchronously."""
 		x=1
+
+	def clear(self):
+		x=1
