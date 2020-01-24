@@ -126,7 +126,6 @@ def print_use():
 			use_queue.task_done()
 			tqdm.write("use discard")
 		data = use_queue.get()
-		print(data)
 		# Primary thread will send None when to kill
 		if data == None:
 			break
