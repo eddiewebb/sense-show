@@ -134,10 +134,8 @@ def print_use():
 		t.update(data['grid_w'])
 		t.refresh()
 		if data['grid_w'] < 0:
-			leds.show_sun(False)
 			leds.flow(14,4, -data['grid_w'], max_use, leds.color_orange)
 		elif data['grid_w'] > 0:
-			leds.show_sun(True)
 			leds.flow(4,14, data['grid_w'], max_use, leds.color_red)
 		use_queue.task_done()
 
