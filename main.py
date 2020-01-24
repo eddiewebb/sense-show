@@ -96,11 +96,12 @@ def print_solar():
 	global solar_queue, keep_running
 	t = tqdm(total=max_solar, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
 	while keep_running:
-		while solar_queue.qsize() > 1:
-			trash = solar_queue.get()
+		while solar_queue.qsize() > 5:
+			solar_queue.get()
 			solar_queue.task_done()
-			log.info("solar discard e:{}, solar:{}, use:{}".format(trash['epoch'], trash['d_solar_w'],trash['grid_w']))
+			tqdm.write("solar discard")
 		data = solar_queue.get()
+		# Primary thread will send None when to kill
 		if data == None:
 			break
 		t.total = data['d_w']
@@ -120,17 +121,24 @@ def print_use():
 	global use_queue, keep_running
 	t = tqdm(total=max_use, unit="watts",miniters=1, position=2, unit_scale=True, leave=True)
 	while keep_running:
-		while use_queue.qsize() > 1:
+		while use_queue.qsize() > 5:
 			use_queue.get()
 			use_queue.task_done()
 			tqdm.write("use discard")
 		data = use_queue.get()
+		print(data)
+		# Primary thread will send None when to kill
 		if data == None:
 			break
 		t.reset()
-		t.update(data['d_w'])
+		t.update(data['grid_w'])
 		t.refresh()
-		leds.flow(4,14,data['d_w'],max_use, leds.color_red)
+		if data['grid_w'] < 0:
+			leds.show_sun(False)
+			leds.flow(14,4, -data['grid_w'], max_use, leds.color_orange)
+		elif data['grid_w'] > 0:
+			leds.show_sun(True)
+			leds.flow(4,14, data['grid_w'], max_use, leds.color_red)
 		use_queue.task_done()
 
 
