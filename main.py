@@ -8,15 +8,15 @@ from tqdm import tqdm, trange
 
 from queue import Queue
 from collections import deque
-import leds
+import led_strip
 
 
 max_solar 	   = 8000
 max_use   	   = 15000
 flip_iterations= 5
 keep_running   = True
-
-
+data_queue    = Queue()
+display = led_strip.LedStrip()
 
 logging.basicConfig(filename='/var/log/sense-debug.log',level=logging.DEBUG)
 log = logging.getLogger('senseshow.main')
@@ -24,20 +24,14 @@ log = logging.getLogger('senseshow.main')
 def main():
 	signal.signal(signal.SIGINT, exit_gracefully)
 	signal.signal(signal.SIGTERM, exit_gracefully)
-	global solar_queue, use_queue
 
-	solar_queue = Queue()
-	use_queue = Queue()
-	functions = list()
-	functions.append(print_solar)
-	functions.append(print_use)
+	
+	display.draw_house()
+	display.draw_panels()
+	display.draw_grid()
+
 	threads = list()
-
-	leds.draw_house()
-	leds.draw_panels()
-	leds.draw_grid()
-
-	for function in functions:
+	for function in [update_display]:
 		logging.info("Main    : create and start thread %s.", function)
 		x = threading.Thread(target=function, args=())
 		threads.append(x)
@@ -46,6 +40,7 @@ def main():
 	while keep_running:	
 		try:
 			update_sense_data()
+			sleep(5) #error here could be from initializing leds or authing with sense, back off high level ,restart it all again
 		except KeyboardInterrupt:
 			exit_gracefully()
 		except:
@@ -59,12 +54,11 @@ def main():
 		logging.info("Main    : thread %d done", index)
 
 def exit_gracefully(signum, frame):
-	global solar_queue, use_queue, keep_running
+	global data_queue, keep_running, display
 	try:
 		keep_running = False
-		use_queue.put(None)
-		solar_queue.put(None)
-		leds.clear()
+		data_queue.put(None)
+		display.clear()
 	except Exception as ex:
 		print("errors exiting")
 		print(ex)
@@ -72,68 +66,65 @@ def exit_gracefully(signum, frame):
 
 
 def update_sense_data():
-	global use_queue, solar_queue, keep_running
+	global data_queue, keep_running, display
 	user = os.getenv("SENSE_USER")
 	passwd = os.getenv("SENSE_PASSWD")	
 	sense = sense_energy.Senseable()
 	sense.authenticate(user,passwd)
 	sense.rate_limit=10
+	display.reset()
 	while keep_running:
 		sense.update_realtime()
 		data = sense.get_realtime()
 		log.debug("Latest Data From: {}".format(time.ctime(data['epoch'])))
-		#qDepth = solar_queue.qsize() + use_queue.qsize()
+		#qDepth = solar_queue.qsize() + data_queue.qsize()
 		#if qDepth > 0:
 		#	tqdm.write("Queuedepth: " + str(qDepth))
-		solar_queue.put(data)
-		use_queue.put(data)
+		data_queue.put(data)
 		time.sleep(1)
 
-def print_solar():
-	global solar_queue, keep_running
-	t = tqdm(total=max_solar, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
+def update_display():
+	global data_queue, keep_running, display
+	solar = tqdm(total=max_solar, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
+	use = tqdm(total=max_use, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
+	grid = tqdm(total=max_use, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
 	while keep_running:
-		while solar_queue.qsize() > 5:
-			solar_queue.get()
-			solar_queue.task_done()
+		while data_queue.qsize() > 5:
+			data_queue.get()
+			data_queue.task_done()
 			tqdm.write("solar discard")
-		data = solar_queue.get()
+		data = data_queue.get()
 		# Primary thread will send None when to kill
 		if data == None:
 			break
-		t.total = data['d_w']
-		t.reset()
-		t.update(data['d_solar_w'])
-		t.refresh()
-		if data['d_solar_w'] < 0:
-			leds.show_sun(False)
-			leds.flow(19,29, -data['d_solar_w'], max_solar, leds.color_red)
-		elif data['d_solar_w'] > 0:
-			leds.show_sun(True)
-			leds.flow(29,19, data['d_solar_w'], max_solar, leds.color_orange)
-	
-		solar_queue.task_done()
 
-def print_use():
-	global use_queue, keep_running
-	t = tqdm(total=max_use, unit="watts",miniters=1, position=2, unit_scale=True, leave=True)
-	while keep_running:
-		while use_queue.qsize() > 5:
-			use_queue.get()
-			use_queue.task_done()
-			tqdm.write("use discard")
-		data = use_queue.get()
-		# Primary thread will send None when to kill
-		if data == None:
-			break
-		t.reset()
-		t.update(data['grid_w'])
-		t.refresh()
+		# Set console indicators	
+		set_tqdm(solar,data['d_solar_w'])
+		set_tqdm(use,data['d_w'])
+		set_tqdm(grid,data['grid_w'])
+
+		# flash solar prohress
+		if data['d_solar_w'] < 0:
+			display.show_sun(False)
+			display.flow(19,29, -data['d_solar_w'], max_solar, display.color_red)
+		elif data['d_solar_w'] > 0:
+			display.show_sun(True)
+			display.flow(29,19, data['d_solar_w'], max_solar, display.color_orange)
+
+		#flash grid
 		if data['grid_w'] < 0:
-			leds.flow(14,4, -data['grid_w'], max_use, leds.color_orange)
+			display.flow(14,4, -data['grid_w'], max_use, display.color_orange)
 		elif data['grid_w'] > 0:
-			leds.flow(4,14, data['grid_w'], max_use, leds.color_red)
-		use_queue.task_done()
+			display.flow(4,14, data['grid_w'], max_use, display.color_red)
+	
+		data_queue.task_done()
+
+def set_tqdm(instance, new_value):
+		instance.reset()
+		instance.update(new_value)
+		instance.refresh()
+
+
 
 
 
