@@ -16,5 +16,6 @@ class Pixels(_pixelbuf.PixelBuf):
 		it may be done asynchronously."""
 		x=1
 
-	def clear(self):
+	def fill(self,color):
 		x=1
+

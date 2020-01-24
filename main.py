@@ -1,5 +1,6 @@
 import os
 import sense_energy
+import signal
 import time
 import logging
 import threading
@@ -14,9 +15,12 @@ max_solar 	   = 2000
 max_solar_draw = 300
 max_use   	   = 15000
 flip_iterations= 5
-
+log 		   = logging.getLogger('senseshow.main')
+keep_running   = True
 
 def main():
+	signal.signal(signal.SIGINT, exit_gracefully)
+	signal.signal(signal.SIGTERM, exit_gracefully)
 	global solar_queue, use_queue
 
 	solar_queue = Queue()
@@ -36,14 +40,11 @@ def main():
 		threads.append(x)
 		x.start()
 
-	while 1:	
+	while keep_running:	
 		try:
 			update_sense_data()
 		except KeyboardInterrupt:
-			solar_queue.put(None)
-			use_queue.put(None)
-			leds.clear()
-			exit()
+			exit_gracefully()
 		except Exception as ex:
 			tqdm.write("Exception encountered.")
 			print(ex)
@@ -55,9 +56,21 @@ def main():
 		thread.join()
 		logging.info("Main    : thread %d done", index)
 
+def exit_gracefully(signum, frame):
+	global solar_queue, use_queue, keep_running
+	try:
+		keep_running = False
+		use_queue.put(None)
+		solar_queue.put(None)
+		leds.clear()
+	except Exception as ex:
+		print("errors exiting")
+		print(ex)
+		exit()
+
 
 def update_sense_data():
-	global use_queue, solar_queue
+	global use_queue, solar_queue, keep_running
 	user = os.getenv("SENSE_USER")
 	passwd = os.getenv("SENSE_PASSWD")	
 	sense = sense_energy.Senseable()
@@ -65,10 +78,10 @@ def update_sense_data():
 	sense.rate_limit=10
 	sense.update_realtime()
 	iterations=0
-	while True:
+	while keep_running:
 		try:
 			data = sense.get_realtime()
-			tqdm.write("Latest: {}".format(time.ctime(data['epoch'])))
+			log.debug("Latest Data From: {}".format(time.ctime(data['epoch'])))
 			#qDepth = solar_queue.qsize() + use_queue.qsize()
 			#if qDepth > 0:
 			#	tqdm.write("Queuedepth: " + str(qDepth))
@@ -80,43 +93,39 @@ def update_sense_data():
 		time.sleep(1)
 
 def print_solar():
-	viz_flipper=0
-	global solar_queue
+	global solar_queue, keep_running
 	t = tqdm(total=max_solar, unit="watts",miniters=1, position=1, unit_scale=True, leave=True)
-	while 1:
+	while keep_running:
 		while solar_queue.qsize() > 1:
 			trash = solar_queue.get()
 			solar_queue.task_done()
-			tqdm.write("solar discard e:{}, solar:{}, use:{}".format(trash['epoch'], trash['d_solar_w'],trash['grid_w']))
+			log.info("solar discard e:{}, solar:{}, use:{}".format(trash['epoch'], trash['d_solar_w'],trash['grid_w']))
 		data = solar_queue.get()
+		if data == None:
+			break
 		t.total = data['d_w']
 		t.reset()
 		t.update(data['d_solar_w'])
 		t.refresh()
-		viz_flipper += 1
-		if True: #viz_flipper <= flip_iterations:
-			if data['d_solar_w'] < 0:
-				leds.show_sun(False)
-				leds.flow(19,29,-data['d_solar_w'],max_solar_draw,leds.color_red)
-			elif data['d_solar_w'] > 0:
-				leds.show_sun(True)
-				leds.flow(29,19,data['d_solar_w'],max_solar,leds.color_orange)
-		else:
-			tqdm.write(str(data['d_solar_w']))
-			#leds.display(data['from_solar'], 19)
-		if viz_flipper > 9:
-			viz_flipper = 0
+		if data['d_solar_w'] < 0:
+			leds.show_sun(False)
+			leds.flow(19,29,-data['d_solar_w'],max_solar_draw,leds.color_red)
+		elif data['d_solar_w'] > 0:
+			leds.show_sun(True)
+	
 		solar_queue.task_done()
 
 def print_use():
-	global use_queue
+	global use_queue, keep_running
 	t = tqdm(total=max_use, unit="watts",miniters=1, position=2, unit_scale=True, leave=True)
-	while 1:
+	while keep_running:
 		while use_queue.qsize() > 1:
 			use_queue.get()
 			use_queue.task_done()
 			tqdm.write("use discard")
 		data = use_queue.get()
+		if data == None:
+			break
 		t.reset()
 		t.update(data['d_w'])
 		t.refresh()
@@ -125,6 +134,6 @@ def print_use():
 
 
 
-if __name__ == '__main__':	
-
+if __name__ == '__main__':
+	print('Sense Show Starting...')
 	main()
