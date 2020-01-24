@@ -11,8 +11,7 @@ from collections import deque
 import leds
 
 
-max_solar 	   = 2000
-max_solar_draw = 300
+max_solar 	   = 8000
 max_use   	   = 15000
 flip_iterations= 5
 log 		   = logging.getLogger('senseshow.main')
@@ -110,7 +109,7 @@ def print_solar():
 		t.refresh()
 		if data['d_solar_w'] < 0:
 			leds.show_sun(False)
-			leds.flow(19,29, -data['d_solar_w'], max_solar_draw, leds.color_red)
+			leds.flow(19,29, -data['d_solar_w'], max_solar, leds.color_red)
 		elif data['d_solar_w'] > 0:
 			leds.show_sun(True)
 			leds.flow(29,19, data['d_solar_w'], max_solar, leds.color_orange)
