@@ -48,9 +48,8 @@ def main():
 			update_sense_data()
 		except KeyboardInterrupt:
 			exit_gracefully()
-		except Exception as ex:
-			log.error("Exception encountered.")
-			print(ex)
+		except:
+			log.exception("Exception in main thread.")
 			continue
 
 
