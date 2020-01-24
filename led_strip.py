@@ -109,7 +109,7 @@ class LedStrip:
 		if yes:
 			color = self.color_orange
 		else:
-			color = off
+			color = self.off
 		self.mark(32,1, color)
 		self.mark(32,2, color)
 		self.pixels.show()
