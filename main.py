@@ -109,9 +109,10 @@ def print_solar():
 		t.refresh()
 		if data['d_solar_w'] < 0:
 			leds.show_sun(False)
-			leds.flow(19,29,-data['d_solar_w'],max_solar_draw,leds.color_red)
+			leds.flow(19,29, -data['d_solar_w'], max_solar_draw, leds.color_red)
 		elif data['d_solar_w'] > 0:
 			leds.show_sun(True)
+			leds.flow(29,19, data['d_solar_w'], max_solar, leds.color_orange)
 	
 		solar_queue.task_done()
 
