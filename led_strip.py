@@ -8,6 +8,10 @@ import os
 
 
 
+
+
+
+
 class LedStrip:
 	GRID=[1,2,3]
 	GFLOW=[4,5,6,7,8,9,10,11,12,13]
