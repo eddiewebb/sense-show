@@ -3,12 +3,12 @@ Description=My service
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 -u main.py
+ExecStart=/home/pi/sense-show/start.sh
 WorkingDirectory=/home/pi/sense-show
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-User=pi
+User=root
 
 [Install]
 WantedBy=multi-user.target
