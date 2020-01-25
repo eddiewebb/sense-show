@@ -4,10 +4,10 @@ Simple python script to visual Sense Energy consumption & solar generation on an
 
 Uses a raspberry 3 and python.
 
-## Running it
-`SENSE_USER="email" SENSE_PASSWD='5ecr!ts' sudo -E python3 main.py`
+### Running it locally, without LEDs
+`SENSE_TEST=True SENSE_USER="email" SENSE_PASSWD='5ecr!ts' sudo -E python3 main.py`
 
-## Output
+#### Output
 
 stdout will see progess bars showing usage
 
@@ -17,12 +17,26 @@ Consumption:  12%|█▏        | 1.74k/15.0k [00:00<00:00, 1.40Mwatts/s]
 From Grid:  12%|█▏        | 1.75k/15.0k [00:00<00:00, 1.67Mwatts/s]
 ```
 
-## Leds
+## Parts
+
+### Raspberry pi
+
+I assume you ahve one if you're here, but if you're even a little interested they are a great investment for learning/tinkering, and [you can get a full rig for < $50](https://amzn.to/3aJ90TA).
+
+### Leds
 
 If wired to an LED strip you'll also visualize it. I bought a cheap serial style one on amazon.
 
 [8x32 LED Panel - Individually Addressable
 ![8x32 led panel](https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B07P5TSKX8&Format=_SL160_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=eddiewebb-20&language=en_US)](https://amzn.to/2RoNRGH)
+
+### Energy Monitoring
+
+I have Sense and love it, Schneider electric seems to be reselling as "Wiser Energy monitor" too
+
+[Sense Energy & Solar monitor![Sense Energy Monitor](https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B075K51T9X&Format=_SL160_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=eddiewebb-20&language=en_US)](https://amzn.to/38BcGVD)
+
+## LED Display
 
 ### Objects
 - Grid - depicted with tower on left
