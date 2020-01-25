@@ -32,7 +32,7 @@ If wired to an LED strip you'll also visualize it.
 
 Orange/Yellow LEDs will flow from panels, through house (reduced by usage) and back to grid. Shown here, these yellow LEDs are moving right (solar) to left (grid)
 
-![Overproducing](/assets/overproducing.jpg)
+![Overproducing](/assets/overproduce.jpg)
 
 ### Consumption
 
