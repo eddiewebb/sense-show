@@ -31,6 +31,7 @@ def main():
 	try:
 		launchAndWait()
 	except: 
+		log.exception("Exception encountered")
 		exit_gracefully()
 	log.info("all done")
 
