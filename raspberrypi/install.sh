@@ -2,4 +2,4 @@
 
 sudo cp senseshow.service /etc/systemd/system/senseshow.service
 
-sudo systemctl enable myscript.service
+sudo systemctl enable senseshow.service
