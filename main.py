@@ -56,9 +56,6 @@ def launchAndWait():
 	
 	# start brand new!
 	led_panel = led_strip.LedStrip()
-	led_panel.draw_house()
-	led_panel.draw_panels()
-	led_panel.draw_grid()
 
 	for function in [update_sense_data, update_led_panel]:
 		logging.info("Main    : create and start thread %s.", function)
@@ -116,7 +113,7 @@ def update_sense_data():
 		#if qDepth > 0:
 		#	tqdm.write("Queuedepth: " + str(qDepth))
 		data_queue.put(data)
-		time.sleep(10)
+		time.sleep(3)
 
 def update_led_panel():
 	log.debug("led function")
@@ -145,16 +142,12 @@ def update_led_panel():
 		# flash solar prohress
 		if data['d_solar_w'] < 0:
 			led_panel.show_sun(False)
-			led_panel.flow(19,29, -data['d_solar_w'], max_solar, led_panel.color_red)
 		elif data['d_solar_w'] > 0:
 			led_panel.show_sun(True)
-			led_panel.flow(29,19, data['d_solar_w'], max_solar, led_panel.color_orange)
+		led_panel.flow_zone(led_panel.SFLOW, data['d_solar_w'], max_solar)
 
 		#flash grid
-		if data['grid_w'] < 0:
-			led_panel.flow(14,4, -data['grid_w'], max_use, led_panel.color_orange)
-		elif data['grid_w'] > 0:
-			led_panel.flow(4,14, data['grid_w'], max_use, led_panel.color_red)
+		led_panel.flow_zone(led_panel.GFLOW, data['grid_w'], max_use)
 	
 		data_queue.task_done()
 	log.debug("led function finishing")
