@@ -116,7 +116,7 @@ def update_sense_data():
 		#if qDepth > 0:
 		#	tqdm.write("Queuedepth: " + str(qDepth))
 		data_queue.put(data)
-		time.sleep(1)
+		time.sleep(10)
 
 def update_led_panel():
 	log.debug("led function")
