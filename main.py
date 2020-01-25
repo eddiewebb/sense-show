@@ -79,7 +79,9 @@ def launchAndWait():
 def halt_threads():
 	global data_queue, abort_threads, threads
 	log.info("Halting threads")
+	# sense and non-blocking threas should respect this.
 	abort_threads = True
+	# q based threads need a poison pill since they block on empty queues.
 	data_queue.put(None)
 
 
@@ -123,16 +125,12 @@ def update_led_panel():
 	use = tqdm(total=max_use, unit="watts",desc="Consumption",miniters=1, position=1, unit_scale=True, leave=True)
 	grid = tqdm(total=max_use, unit="watts",desc="From Grid",miniters=1, position=2, unit_scale=True, leave=True)
 	while True:
-		log.debug("led loop")
-		global abort_threads
-		if abort_threads:
-			log.info("Abort threads true, exiting LED loop")
-			break
 		while data_queue.qsize() > 5:
 			data_queue.get()
 			data_queue.task_done()
 			log.info("solar discard")
 		data = data_queue.get()
+		# Since queue.get is blocking, we can't use the commong boolean on the loop, instead a None item will kill us.
 		if data == None:
 			#we're being asked to shutdwn
 			log.info("poison pill in queue, exiting LED thread")
