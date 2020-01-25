@@ -7,7 +7,7 @@ from queue import Queue
 from collections import deque
 import sense_energy
 from tqdm import tqdm
-
+from dotenv import load_dotenv
 import led_strip
 
 
@@ -19,26 +19,19 @@ led_panel        = None
 threads = list()
 keep_running = True
 
-logging.basicConfig(filename='/var/log/sense-debug.log',level=logging.DEBUG)
+logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
 log = logging.getLogger('senseshow.main')
 
 def main():
 	signal.signal(signal.SIGINT, exit_gracefully)
 	signal.signal(signal.SIGTERM, exit_gracefully)
 
+	load_dotenv()
 
-
-	while keep_running:	
-		try:
-			launchAndWait()
-		except KeyboardInterrupt:
-			exit_gracefully()
-			#break
-		except:
-			# any other exception cshould trigger full restart
-			log.exception("Exception in main thread, asking others to close for restart.")
-			time.sleep(5) #error here could be from initializing leds or authing with sense, back off high level ,restart it all again
-			#continue
+	try:
+		launchAndWait()
+	except: 
+		exit_gracefully()
 	log.info("all done")
 
 def launchAndWait():
