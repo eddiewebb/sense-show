@@ -2,18 +2,21 @@ import os
 import time
 import math
 import operator
+from datetime import datetime
 
 
+import logging
+logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
+log = logging.getLogger('senseshow.main')
 
 
-
+GRID=[1,2,3]
+GFLOW=[4,5,6,7,8,9,10,11,12,13]
+HOUSE=[14,15,16,17,18]
+SFLOW=[19,20,21,22,24,25,26,27,28,29]
+SOLAR=[30,31,32]
 
 class LedStrip:
-	GRID=[1,2,3]
-	GFLOW=[4,5,6,7,8,9,10,11,12,13]
-	HOUSE=[14,15,16,17,18]
-	SFLOW=[19,20,21,22,24,25,26,27,28,29]
-	SOLAR=[30,31,32]
 
 
 	off=(0,0,0)
@@ -29,26 +32,26 @@ class LedStrip:
 		# Startup
 		self.set_pixels()
 		self.flow(1,32,8000,8000,self.color_orange)
-
 		self.draw_house()
 		self.draw_panels()
 		self.draw_grid()
 
 
 	def reset(self):
+		log.debug("pixels reset")
 		self.set_pixels()
 
 
-	def set_pixels(self):
-	
+	def set_pixels(self):	
 		if os.getenv("SENSE_TEST"):
+			log.debug("Using console printout instead of LEDs")
 			import mock_pixels
 			self.pixels = mock_pixels.Pixels(256)
 		else:
+			log.debug("Using LED panel via neopixel")
 			import board
 			import neopixel			
 			self.pixels = neopixel.NeoPixel(board.D18, 256, auto_write=False, brightness=0.5)
-
 
 
 	def get_id_by_coordinates(self,x,y):
@@ -63,6 +66,7 @@ class LedStrip:
 			id=((x-1)*8)+(y-1)
 		return id
 
+
 	def chase(self):
 		for i in range(0,259): # notice we go over!!
 			if i > 0 and i < 256:
@@ -76,9 +80,6 @@ class LedStrip:
 			self.pixels.show()
 
 
-
-		#time.sleep(.005)
-
 	def waterfall(self):
 		for x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
 			for y in range(1, 8 + 1): # 8 rows, top down
@@ -91,6 +92,7 @@ class LedStrip:
 				if x > 3  and x - 3 < 33:
 					self.pixels[self.get_id_by_coordinates(x-3,y)] = (0,0,0) #off
 			self.pixels.show()	
+
 
 	def flow(self, start, end, rate, max_rate, color):
 		#rate is rows we fillfor x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
@@ -128,23 +130,29 @@ class LedStrip:
 		self.mark(32,2, color)
 		self.pixels.show()
 
-	def flow_zone(self,zone,value,max):
+	def flow_solar(self,value,max):
 		if value > 0:
-			self.flow(zone[0],zone[-1], value, max, self.color_red)
+			self.flow(SFLOW[-1],SFLOW[0], value, max, self.color_orange)
 		else:
-			self.flow(zone[-1],zone[0], -value, max, self.color_green)
+			self.flow(SFLOW[0],SFLOW[-1], -value, max, self.color_red)
+
+	def flow_grid(self,value,max):
+		if value > 0:
+			self.flow(GFLOW[0],GFLOW[-1], value, max, self.color_red)
+		else:
+			self.flow(GFLOW[-1],GFLOW[0], -value, max, self.color_green)
 
 
 	def draw_house(self):
-		for x in self.HOUSE:
+		for x in HOUSE:
 			for y in reversed(range(4,9)):
-				if (y == 5) or ((y > 5 or y==4) and x > self.HOUSE[0] and x < self.HOUSE[4])  :
+				if (y == 5) or ((y > 5 or y==4) and x > HOUSE[0] and x < HOUSE[4])  :
 					self.mark(x,y,self.color_teal)
-			self.mark(self.HOUSE[2],3,self.color_teal)
+			self.mark(HOUSE[2],3,self.color_teal)
 		self.pixels.show()
 
 	def draw_panels(self):
-		for x in self.SOLAR:
+		for x in SOLAR:
 			for y in reversed(range(1,9)):
 				if x == 30 and y < 5:
 					self.mark(x,y,self.color_teal)
@@ -155,7 +163,7 @@ class LedStrip:
 		self.pixels.show()
 
 	def draw_grid(self):
-		for x in self.GRID:
+		for x in GRID:
 			for y in reversed(range(2,9)):
 				if x ==2 or y in (2,4):
 					self.mark(x,y,self.color_purple)

@@ -138,12 +138,9 @@ def update_led_panel():
 			led_panel.show_sun(False)
 		elif data['d_solar_w'] > 0:
 			led_panel.show_sun(True)
-    
-    # invert solar flow value 
-		led_panel.flow_zone(led_panel.SFLOW, -1 * data['d_solar_w'], max_solar)
-
-		#flash grid
-		led_panel.flow_zone(led_panel.GFLOW, data['grid_w'], max_use)
+	
+		led_panel.flow_solar(data['d_solar_w'], max_solar)
+		led_panel.flow_grid(data['grid_w'], max_use)
 	
 		data_queue.task_done()
 	log.debug("led function finishing")

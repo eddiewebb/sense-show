@@ -28,7 +28,7 @@
 from blessings import Terminal
 import time
 import logging
-logging.basicConfig(filename='/var/log/sense-debug.log',level=logging.DEBUG)
+logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
 log = logging.getLogger('senseshow.main')
 
 
