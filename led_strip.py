@@ -4,7 +4,18 @@ import math
 import operator
 
 
+
+
+
+
 class LedStrip:
+	GRID=[1,2,3]
+	GFLOW=[4,5,6,7,8,9,10,11,12,13]
+	HOUSE=[14,15,16,17,18]
+	SFLOW=[19,20,21,22,24,25,26,27,28,29]
+	SOLAR=[30,31,32]
+
+
 	off=(0,0,0)
 	color_green=(0,80,0)
 	color_orange=(80,40,0)
@@ -19,6 +30,9 @@ class LedStrip:
 		self.set_pixels()
 		self.flow(1,32,8000,8000,self.color_orange)
 
+		self.draw_house()
+		self.draw_panels()
+		self.draw_grid()
 
 
 	def reset(self):
@@ -114,15 +128,23 @@ class LedStrip:
 		self.mark(32,2, color)
 		self.pixels.show()
 
+	def flow_zone(self,zone,value,max):
+		if value > 0:
+			self.flow(zone[0],zone[-1], value, max, self.color_red)
+		else:
+			self.flow(zone[-1],zone[0], -value, max, self.color_green)
+
+
 	def draw_house(self):
-		for x in range(15,19):
-			for y in reversed(range(5,9)):
-				if x in (16,17) or y == 6:
+		for x in self.HOUSE:
+			for y in reversed(range(4,9)):
+				if (y == 5) or ((y > 5 or y==4) and x > self.HOUSE[0] and x < self.HOUSE[4])  :
 					self.mark(x,y,self.color_teal)
+			self.mark(self.HOUSE[2],3,self.color_teal)
 		self.pixels.show()
 
 	def draw_panels(self):
-		for x in range(30,33):
+		for x in self.SOLAR:
 			for y in reversed(range(1,9)):
 				if x == 30 and y < 5:
 					self.mark(x,y,self.color_teal)
@@ -133,9 +155,9 @@ class LedStrip:
 		self.pixels.show()
 
 	def draw_grid(self):
-		for x in range(1,4):
-			for y in reversed(range(4,9)):
-				if x ==2 or y in (4,6):
+		for x in self.GRID:
+			for y in reversed(range(2,9)):
+				if x ==2 or y in (2,4):
 					self.mark(x,y,self.color_purple)
 		self.pixels.show()
 
