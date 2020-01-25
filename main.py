@@ -107,7 +107,7 @@ def update_sense_data():
 		#if qDepth > 0:
 		#	tqdm.write("Queuedepth: " + str(qDepth))
 		data_queue.put(data)
-		time.sleep(1)
+		time.sleep(3)
 
 def update_led_panel():
 	log.debug("led function")
@@ -138,7 +138,9 @@ def update_led_panel():
 			led_panel.show_sun(False)
 		elif data['d_solar_w'] > 0:
 			led_panel.show_sun(True)
-		led_panel.flow_zone(led_panel.SFLOW, -data['d_solar_w'], max_solar)
+    
+    # invert solar flow value 
+		led_panel.flow_zone(led_panel.SFLOW, -1 * data['d_solar_w'], max_solar)
 
 		#flash grid
 		led_panel.flow_zone(led_panel.GFLOW, data['grid_w'], max_use)
