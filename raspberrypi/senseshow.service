@@ -3,7 +3,7 @@ Description=My service
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 -u main.py
+ExecStart=$(sudo -u pi pull && /usr/bin/python3 -u main.py)
 WorkingDirectory=/home/pi/sense-show
 StandardOutput=inherit
 StandardError=inherit

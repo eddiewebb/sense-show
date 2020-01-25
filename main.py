@@ -137,7 +137,7 @@ def update_led_panel():
 			led_panel.show_sun(False)
 		elif data['d_solar_w'] > 0:
 			led_panel.show_sun(True)
-		led_panel.flow_zone(led_panel.SFLOW, data['d_solar_w'], max_solar)
+		led_panel.flow_zone(led_panel.SFLOW, -data['d_solar_w'], max_solar)
 
 		#flash grid
 		led_panel.flow_zone(led_panel.GFLOW, data['grid_w'], max_use)
