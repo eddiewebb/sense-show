@@ -72,12 +72,8 @@ class Pixels():
 	def fill(self,color):
 		for y in range(1,9):
 			for x in range(1, 33):
-				if color > (0,0,0):
-					print('| X ', end='')
-				else:
-					print('| O ', end='')
-			print('|')
-				
+				self.__setitem__(self.get_id_by_coordinates(x,y),color)
+		self.show()	
 
 	def deinit(self):
 		self.fill((0,0,0))

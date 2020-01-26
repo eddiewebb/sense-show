@@ -27,15 +27,9 @@ def main():
 
 	load_dotenv()
 
-	try:
-		launchAndWait()
-	except: 
-		log.exception("Exception encountered")
-	finally:
-		exit_gracefully()
-		global led_panel
-		led_panel.pixels.deinit()
-		log.info("all done")
+	launchAndWait()
+
+	log.info("all done")
 
 def launchAndWait():
 	global led_panel, abort_threads, threads
@@ -132,6 +126,7 @@ def update_led_panel():
 			if data == None:
 				#we're being asked to shutdwn
 				log.info("poison pill in queue, exiting LED thread")
+				led_panel.pixels.deinit()
 				break
 			else:
 				log.debug("new dtata to show")
