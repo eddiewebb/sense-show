@@ -138,11 +138,16 @@ def update_led_panel():
 			# flash solar prohress
 			if data['d_solar_w'] < 0:
 				led_panel.show_sun(False)
+				# no sun, energy flows grid to house to panels
+				led_panel.flow_grid(data['grid_w'], max_use)
+				led_panel.flow_solar(data['d_solar_w'], max_solar)
 			elif data['d_solar_w'] > 0:
 				led_panel.show_sun(True)
+				# making energy, flow starts at paenl (even if grid also feeds in)
+				led_panel.flow_solar(data['d_solar_w'], max_solar)
+				led_panel.flow_grid(data['grid_w'], max_use)
 		
-			led_panel.flow_solar(data['d_solar_w'], max_solar)
-			led_panel.flow_grid(data['grid_w'], max_use)
+
 		
 			data_queue.task_done()
 	except:
