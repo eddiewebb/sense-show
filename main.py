@@ -113,9 +113,9 @@ def update_led_panel():
 	try:
 		log.debug("led function")
 		global data_queue, led_panel
-		solar = tqdm(total=max_solar, unit="watts",desc="From Solar", miniters=1, position=0, unit_scale=True, leave=True)
-		use = tqdm(total=max_use, unit="watts",desc="Consumption",miniters=1, position=1, unit_scale=True, leave=True)
-		grid = tqdm(total=max_use, unit="watts",desc="From Grid",miniters=1, position=2, unit_scale=True, leave=True)
+		#solar = tqdm(total=max_solar, unit="watts",desc="From Solar", miniters=1, position=0, unit_scale=True, leave=True)
+		#use = tqdm(total=max_use, unit="watts",desc="Consumption",miniters=1, position=1, unit_scale=True, leave=True)
+		#grid = tqdm(total=max_use, unit="watts",desc="From Grid",miniters=1, position=2, unit_scale=True, leave=True)
 		while True:
 			while data_queue.qsize() > 5:
 				data_queue.get()
@@ -131,9 +131,9 @@ def update_led_panel():
 			else:
 				log.debug("new dtata to show")
 			# Set console indicators	
-			set_tqdm(solar,data['d_solar_w'])
-			set_tqdm(use,data['d_w'])
-			set_tqdm(grid,data['grid_w'])
+			# set_tqdm(solar,data['d_solar_w'])
+			# set_tqdm(use,data['d_w'])
+			# set_tqdm(grid,data['grid_w'])
 
 			# flash solar prohress
 			if data['d_solar_w'] < 0:
@@ -141,7 +141,7 @@ def update_led_panel():
 				# no sun, energy flows grid to house to panels
 				led_panel.flow_grid(data['grid_w'], max_use)
 				led_panel.flow_solar(data['d_solar_w'], max_solar)
-			elif data['d_solar_w'] > 0:
+			elif data['d_solar_w'] >= 0:
 				led_panel.show_sun(True)
 				# making energy, flow starts at paenl (even if grid also feeds in)
 				led_panel.flow_solar(data['d_solar_w'], max_solar)

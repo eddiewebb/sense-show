@@ -11,9 +11,9 @@ log = logging.getLogger('senseshow.main')
 
 
 GRID=[1,2,3]
-GFLOW=[4,5,6,7,8,9,10,11,12,13]
+GFLOW=[3,4,5,6,7,8,9,10,11,12,13,14,15]
 HOUSE=[14,15,16,17,18]
-SFLOW=[19,20,21,22,24,25,26,27,28,29]
+SFLOW=[17,18,19,20,21,22,24,25,26,27,28,29,30]
 SOLAR=[30,31,32]
 
 class LedStrip:
@@ -35,14 +35,14 @@ class LedStrip:
 		# Startup
 		self.set_pixels()
 
-		self.flow(1,32,8000,8000,self.color_teal)
-		self.flow(32,1,8000,8000,self.color_purple)
-		self.waterfall(1,16)
+		self.flow(1,32,8000,8000,self.color_teal, False)
+		self.flow(32,1,8000,8000,self.color_purple, False)
+		self.waterfall(1,8)
 		self.draw_grid()
-		self.flow(32,16,8000,8000,self.color_orange)
+		self.flow(32,24,8000,8000,self.color_orange, False)
 		self.draw_panels()		
-		self.flow(16,19,8000,8000,self.color_green)
-		self.flow(16,13,8000,8000,self.color_green)
+		self.flow(16,19,8000,8000,self.color_green, False)
+		self.flow(16,13,8000,8000,self.color_green, False)
 		self.draw_plug()
 
 
@@ -90,20 +90,21 @@ class LedStrip:
 
 
 	def waterfall(self, start, end):
-		for x in range(start, end + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
+		stop = end + 1
+		for x in range(start, stop + 3): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
 			for y in range(1, 8 + 1): # 8 rows, top down
-				if x > 0 and x < 33:
+				if x > 0 and x < stop:
 					self.pixels[self.get_id_by_coordinates(x,y)] = (255,0,0) # red
-				if x > 1  and x - 1 < 33:
+				if x > 1  and x - 1 < stop:
 					self.pixels[self.get_id_by_coordinates(x-1,y)] = (255,99,71) #tomato
-				if x > 2  and x - 2 < 33:
+				if x > 2  and x - 2 < stop:
 					self.pixels[self.get_id_by_coordinates(x-2,y)] = (255,127,80) #coral
-				if x > 3  and x - 3 < 33:
+				if x > 3  and x - 3 < stop:
 					self.pixels[self.get_id_by_coordinates(x-3,y)] = (0,0,0) #off
 			self.pixels.show()	
 
 
-	def flow(self, start, end, rate, max_rate, color):
+	def flow(self, start, end, rate, max_rate, color, safe_set=True):
 		#rate is rows we fillfor x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
 		flock = math.floor((rate / max_rate) * 7) + 1
 		if end > start:
@@ -114,13 +115,28 @@ class LedStrip:
 				self.inner_flow(x, flock, color, start, end, 1, operator.ge, operator.le)
 
 
-	def inner_flow(self, x, flock, color, start, end, tail=-1, operat=operator.le, operat2=operator.ge):	
+	def inner_flow(self, x, flock, color, start, end, tail=-1, lessThan=operator.le, greaterThan=operator.ge, safe_set=True):	
+		marker = self.mark
+		if safe_set:
+			marker = self.safe_set
 		for y in reversed(range(9-flock,9)):
-			if operat(x, end):
-				self.pixels[self.get_id_by_coordinates(x,y)] = color # red
-			if operat2(x + tail*flock, start) and operat(x + tail*flock, end):
-				self.pixels[self.get_id_by_coordinates(x + tail*flock,y)] = (0,0,0) #red
+			if lessThan(x, end):
+				marker(x,y,color)
+			if greaterThan(x + tail*flock, start) and lessThan(x + tail*flock, end):
+				try:
+					marker(x + tail*flock,y,self.off, color) #off
+				except:
+					marker(x + tail*flock,y,self.off) #off
+
 		self.pixels.show()
+
+	def safe_set(self, x, y, color, only=(0,0,0)):
+		id=self.get_id_by_coordinates(x,y)
+		if self.pixels[id] != only:
+			return
+		self.pixels[id] = color
+
+
 
 	"""
 	Set certain LED positions to status.
