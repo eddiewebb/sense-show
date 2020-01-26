@@ -26,8 +26,8 @@ class LedStrip:
 	color_teal=(0,80,80)
 	color_red=(80,0,0)
 	color_purple=(128,0,128)
-	color_wheat=(245,222,179)
-	color_gray=(128,128,128)
+	color_gray=(112,128,144)
+	color_wood=(222,184,135)
 
 
 
@@ -156,8 +156,8 @@ class LedStrip:
 		for x in HOUSE:
 			for y in reversed(range(4,9)):
 				if (y == 5) or ((y > 5 or y==4) and x > HOUSE[0] and x < HOUSE[4])  :
-					self.mark(x,y,self.color_wheat)
-			self.mark(HOUSE[2],3,self.color_wheat)
+					self.mark(x,y,self.color_wood)
+			self.mark(HOUSE[2],3,self.color_wood)
 		self.pixels.show()
 
 	def draw_panels(self):
