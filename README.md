@@ -4,7 +4,7 @@ Simple python script to visual Sense Energy consumption & solar generation on an
 
 Uses a raspberry 3 and python.
 
-### Running it locally, without LEDs
+## Running it locally, without LEDs
 `SENSE_TEST=True SENSE_USER="email" SENSE_PASSWD='5ecr!ts' sudo -E python3 main.py`
 
 #### Output
@@ -25,6 +25,18 @@ From Solar:  -0%|          | -7.00/8.00k [00:00<-1:59:59, -7.09kwatts/s]
 Consumption:  12%|█▏        | 1.74k/15.0k [00:00<00:00, 1.40Mwatts/s]
 From Grid:  12%|█▏        | 1.75k/15.0k [00:00<00:00, 1.67Mwatts/s]
 ```
+
+## Setup on pi
+THis project includes the files needed to register this script as an always running daemon. THis will restart on crash or power loss.
+
+1) git clone this repo to your pi, using `/home/pi/sense-show` as checkout dir will save editing files
+2) Create a `.env` file in the checkout dir containing your `SENSE_USER` and `SENSE_PASSWD`.
+2) Optionally comment out the `git pull` in `start.sh` if script should not auto update itself.
+2) cd into `raspberrypi` directory, and confirm paths in senseshow.service, and run `install.sh` 
+3) To test it run `sudo systemctl start senseshow.service` and then `systemctl status senseshow.service` and or `tail -f /home/pi/sense-show/sense-debug.log` to make sure everything works.
+4) Unplug pi and plug it back in, wait ~30 seconds and confirm everythign started, if not, repeat last step.
+
+
 
 ## Parts
 

@@ -7,7 +7,7 @@ from queue import Queue
 from collections import deque
 import sense_energy
 from tqdm import tqdm
-
+from dotenv import load_dotenv
 import led_strip
 
 
@@ -17,28 +17,18 @@ flip_iterations= 5
 data_queue    = Queue()
 led_panel        = None
 threads = list()
-keep_running = True
 
-logging.basicConfig(filename='/var/log/sense-debug.log',level=logging.DEBUG)
+logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
 log = logging.getLogger('senseshow.main')
 
 def main():
 	signal.signal(signal.SIGINT, exit_gracefully)
 	signal.signal(signal.SIGTERM, exit_gracefully)
 
+	load_dotenv()
 
+	launchAndWait()
 
-	while keep_running:	
-		try:
-			launchAndWait()
-		except KeyboardInterrupt:
-			exit_gracefully()
-			#break
-		except:
-			# any other exception cshould trigger full restart
-			log.exception("Exception in main thread, asking others to close for restart.")
-			time.sleep(5) #error here could be from initializing leds or authing with sense, back off high level ,restart it all again
-			#continue
 	log.info("all done")
 
 def launchAndWait():
@@ -70,6 +60,7 @@ def launchAndWait():
 		thread.join()
 		logging.info("Main    : thread %d done", index)
 
+	log.info("All threads rejoined, return to main")
 
 
 
@@ -83,74 +74,85 @@ def halt_threads():
 
 
 	
-
+"""
+Called by singla traps only, you should just call halt_threads()
+"""
 def exit_gracefully(signum, frame):
-	global keep_running, led_panel
 	log.info("Shutting down")
-	keep_running = False
 	halt_threads()
-	time.sleep(1)	
-	led_panel.clear()
+	time.sleep(1)
 
 
 
 def update_sense_data():
-	global data_queue, led_panel
-	user = os.getenv("SENSE_USER")
-	passwd = os.getenv("SENSE_PASSWD")	
-	sense = sense_energy.Senseable()
-	sense.rate_limit=10
-	sense.authenticate(user,passwd)
-	while True:
-		global abort_threads
-		if abort_threads:
-			log.info("Abort threads true, exiting Sense loop")
-			break
-		sense.update_realtime()
-		data = sense.get_realtime()
-		log.debug("Latest Data From: {}".format(time.ctime(data['epoch'])))
-		#qDepth = solar_queue.qsize() + data_queue.qsize()
-		#if qDepth > 0:
-		#	tqdm.write("Queuedepth: " + str(qDepth))
-		data_queue.put(data)
-		time.sleep(3)
+	try:
+		global data_queue, led_panel
+		user = os.getenv("SENSE_USER")
+		passwd = os.getenv("SENSE_PASSWD")	
+		sense = sense_energy.Senseable()
+		sense.rate_limit=10
+		sense.authenticate(user,passwd)
+		while True:
+			global abort_threads
+			if abort_threads:
+				log.info("Abort threads true, exiting Sense loop")
+				break
+			sense.update_realtime()
+			data = sense.get_realtime()
+			log.debug("Latest Data From: {}".format(time.ctime(data['epoch'])))
+			#qDepth = solar_queue.qsize() + data_queue.qsize()
+			#if qDepth > 0:
+			#	tqdm.write("Queuedepth: " + str(qDepth))
+			data_queue.put(data)
+			time.sleep(1.1)
+	except:
+		log.exception("Exception in sense thread")
+		halt_threads()
 
 def update_led_panel():
-	log.debug("led function")
-	global data_queue, led_panel
-	solar = tqdm(total=max_solar, unit="watts",desc="From Solar", miniters=1, position=0, unit_scale=True, leave=True)
-	use = tqdm(total=max_use, unit="watts",desc="Consumption",miniters=1, position=1, unit_scale=True, leave=True)
-	grid = tqdm(total=max_use, unit="watts",desc="From Grid",miniters=1, position=2, unit_scale=True, leave=True)
-	while True:
-		while data_queue.qsize() > 5:
-			data_queue.get()
+	try:
+		log.debug("led function")
+		global data_queue, led_panel
+		solar = tqdm(total=max_solar, unit="watts",desc="From Solar", miniters=1, position=0, unit_scale=True, leave=True)
+		use = tqdm(total=max_use, unit="watts",desc="Consumption",miniters=1, position=1, unit_scale=True, leave=True)
+		grid = tqdm(total=max_use, unit="watts",desc="From Grid",miniters=1, position=2, unit_scale=True, leave=True)
+		while True:
+			while data_queue.qsize() > 5:
+				data_queue.get()
+				data_queue.task_done()
+				log.info("solar discard")
+			data = data_queue.get()
+			# Since queue.get is blocking, we can't use the commong boolean on the loop, instead a None item will kill us.
+			if data == None:
+				#we're being asked to shutdwn
+				log.info("poison pill in queue, exiting LED thread")
+				led_panel.pixels.deinit()
+				break
+			else:
+				log.debug("new dtata to show")
+			# Set console indicators	
+			set_tqdm(solar,data['d_solar_w'])
+			set_tqdm(use,data['d_w'])
+			set_tqdm(grid,data['grid_w'])
+
+			# flash solar prohress
+			if data['d_solar_w'] < 0:
+				led_panel.show_sun(False)
+				# no sun, energy flows grid to house to panels
+				led_panel.flow_grid(data['grid_w'], max_use)
+				led_panel.flow_solar(data['d_solar_w'], max_solar)
+			elif data['d_solar_w'] > 0:
+				led_panel.show_sun(True)
+				# making energy, flow starts at paenl (even if grid also feeds in)
+				led_panel.flow_solar(data['d_solar_w'], max_solar)
+				led_panel.flow_grid(data['grid_w'], max_use)
+		
+
+		
 			data_queue.task_done()
-			log.info("solar discard")
-		data = data_queue.get()
-		# Since queue.get is blocking, we can't use the commong boolean on the loop, instead a None item will kill us.
-		if data == None:
-			#we're being asked to shutdwn
-			log.info("poison pill in queue, exiting LED thread")
-			break
-		else:
-			log.debug("new dtata to show")
-		# Set console indicators	
-		set_tqdm(solar,data['d_solar_w'])
-		set_tqdm(use,data['d_w'])
-		set_tqdm(grid,data['grid_w'])
-
-		# flash solar prohress
-		if data['d_solar_w'] < 0:
-			led_panel.show_sun(False)
-		elif data['d_solar_w'] > 0:
-			led_panel.show_sun(True)
-		led_panel.flow_zone(led_panel.SFLOW, data['d_solar_w'], max_solar)
-
-		#flash grid
-		led_panel.flow_zone(led_panel.GFLOW, data['grid_w'], max_use)
-	
-		data_queue.task_done()
-	log.debug("led function finishing")
+	except:
+		log.exception("led thread exception")
+		halt_threads()
 
 def set_tqdm(instance, new_value):
 		instance.reset()

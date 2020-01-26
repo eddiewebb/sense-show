@@ -1,0 +1,14 @@
+[Unit]
+Description=SenseShow
+After=network.target
+After=network-online.target
+
+[Service]
+ExecStart=/home/pi/sense-show/start.sh
+WorkingDirectory=/home/pi/sense-show
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
