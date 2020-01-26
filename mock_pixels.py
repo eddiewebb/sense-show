@@ -79,7 +79,8 @@ class Pixels():
 			print('|')
 				
 
-
+	def deinit(self):
+		self.fill((0,0,0))
 
 
 	def get_id_by_coordinates(self,x,y):

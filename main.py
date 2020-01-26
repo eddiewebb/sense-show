@@ -17,7 +17,6 @@ flip_iterations= 5
 data_queue    = Queue()
 led_panel        = None
 threads = list()
-keep_running = True
 
 logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
 log = logging.getLogger('senseshow.main')
@@ -32,8 +31,11 @@ def main():
 		launchAndWait()
 	except: 
 		log.exception("Exception encountered")
+	finally:
 		exit_gracefully()
-	log.info("all done")
+		global led_panel
+		led_panel.pixels.deinit()
+		log.info("all done")
 
 def launchAndWait():
 	global led_panel, abort_threads, threads
@@ -64,6 +66,7 @@ def launchAndWait():
 		thread.join()
 		logging.info("Main    : thread %d done", index)
 
+	log.info("All threads rejoined, return to main")
 
 
 
@@ -77,14 +80,13 @@ def halt_threads():
 
 
 	
-
+"""
+Called by singla traps only, you should just call halt_threads()
+"""
 def exit_gracefully(signum, frame):
-	global keep_running, led_panel
 	log.info("Shutting down")
-	keep_running = False
 	halt_threads()
-	time.sleep(1)	
-	led_panel.clear()
+	time.sleep(1)
 
 
 
