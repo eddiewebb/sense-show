@@ -31,7 +31,10 @@ class LedStrip:
 	def __init__(self):
 		# Startup
 		self.set_pixels()
-		self.flow(1,16,8000,8000,self.color_red)
+
+		self.flow(1,32,8000,8000,self.color_teal)
+		self.flow(32,1,8000,8000,self.color_purple)
+		self.waterfall(1,16)
 		self.draw_grid()
 		self.flow(32,16,8000,8000,self.color_orange)
 		self.draw_panels()		
@@ -83,15 +86,15 @@ class LedStrip:
 			self.pixels.show()
 
 
-	def waterfall(self):
-		for x in range(1,32 + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
+	def waterfall(self, start, end):
+		for x in range(start, end + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
 			for y in range(1, 8 + 1): # 8 rows, top down
 				if x > 0 and x < 33:
-					self.pixels[self.get_id_by_coordinates(x,y)] = (126,126,126) # green
+					self.pixels[self.get_id_by_coordinates(x,y)] = (255,0,0) # green
 				if x > 1  and x - 1 < 33:
-					self.pixels[self.get_id_by_coordinates(x-1,y)] = (60,100,60) #red
+					self.pixels[self.get_id_by_coordinates(x-1,y)] = (80,0,0) #red
 				if x > 2  and x - 2 < 33:
-					self.pixels[self.get_id_by_coordinates(x-2,y)] = (20,40,20) #blyue
+					self.pixels[self.get_id_by_coordinates(x-2,y)] = (20,0,20) #blyue
 				if x > 3  and x - 3 < 33:
 					self.pixels[self.get_id_by_coordinates(x-3,y)] = (0,0,0) #off
 			self.pixels.show()	
