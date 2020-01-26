@@ -43,7 +43,7 @@ class LedStrip:
 		self.draw_panels()		
 		self.flow(16,19,8000,8000,self.color_green)
 		self.flow(16,13,8000,8000,self.color_green)
-		self.draw_house()
+		self.draw_plug()
 
 
 	def reset(self):
@@ -158,6 +158,13 @@ class LedStrip:
 				if (y == 5) or ((y > 5 or y==4) and x > HOUSE[0] and x < HOUSE[4])  :
 					self.mark(x,y,self.color_wood)
 			self.mark(HOUSE[2],3,self.color_wood)
+		self.pixels.show()
+
+	def draw_plug(self):
+		for x in HOUSE:
+			for y in reversed(range(1,9)):
+				if y == 4 or ( y in range(1,7) and x in(HOUSE[1],HOUSE[-2]) ) or ( y > 3 and x == HOUSE[2] ) :
+					self.mark(x,y,self.color_wood)
 		self.pixels.show()
 
 	def draw_panels(self):
