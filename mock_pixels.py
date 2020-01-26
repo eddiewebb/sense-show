@@ -51,8 +51,8 @@ class Pixels():
 		self.bpp=3
 		self.order = RGB
 		self.buf = bytearray(self.n * self.bpp)
+		self.term = Terminal()
 		self.fill((0,0,0))
-		self.t = Terminal()
 
 	def show(self):
 		for y in range(1,9):
@@ -65,9 +65,9 @@ class Pixels():
 					row+="-X-|"
 				else:
 					row+="   |"
-			with self.t.location(0, self.t.height - (14-y)):
+			with self.term.location(0, self.term.height - (14-y)):
 				print(row)
-		time.sleep(.10)	
+		time.sleep(.05)	
 
 	def fill(self,color):
 		for y in range(1,9):

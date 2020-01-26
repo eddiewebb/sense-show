@@ -31,10 +31,13 @@ class LedStrip:
 	def __init__(self):
 		# Startup
 		self.set_pixels()
-		self.flow(1,32,8000,8000,self.color_orange)
-		self.draw_house()
-		self.draw_panels()
+		self.flow(1,16,8000,8000,self.color_red)
 		self.draw_grid()
+		self.flow(32,16,8000,8000,self.color_orange)
+		self.draw_panels()		
+		self.flow(16,19,8000,8000,self.color_green)
+		self.flow(16,13,8000,8000,self.color_green)
+		self.draw_house()
 
 
 	def reset(self):
