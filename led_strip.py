@@ -21,10 +21,13 @@ class LedStrip:
 
 	off=(0,0,0)
 	color_green=(0,80,0)
+	color_gold=(255,215,0)
 	color_orange=(80,40,0)
 	color_teal=(0,80,80)
 	color_red=(80,0,0)
 	color_purple=(128,0,128)
+	color_wheat=(245,222,179)
+	color_gray=(128,128,128)
 
 
 
@@ -90,11 +93,11 @@ class LedStrip:
 		for x in range(start, end + 3 + 1): # 32 columns, left to right, range expects 1 over ending,and  need to clear 3 tailing colors 
 			for y in range(1, 8 + 1): # 8 rows, top down
 				if x > 0 and x < 33:
-					self.pixels[self.get_id_by_coordinates(x,y)] = (255,0,0) # green
+					self.pixels[self.get_id_by_coordinates(x,y)] = (255,0,0) # red
 				if x > 1  and x - 1 < 33:
-					self.pixels[self.get_id_by_coordinates(x-1,y)] = (80,0,0) #red
+					self.pixels[self.get_id_by_coordinates(x-1,y)] = (255,99,71) #tomato
 				if x > 2  and x - 2 < 33:
-					self.pixels[self.get_id_by_coordinates(x-2,y)] = (20,0,20) #blyue
+					self.pixels[self.get_id_by_coordinates(x-2,y)] = (255,127,80) #coral
 				if x > 3  and x - 3 < 33:
 					self.pixels[self.get_id_by_coordinates(x-3,y)] = (0,0,0) #off
 			self.pixels.show()	
@@ -129,7 +132,7 @@ class LedStrip:
 
 	def show_sun(self, yes):	
 		if yes:
-			color = self.color_orange
+			color = self.color_gold
 		else:
 			color = self.off
 		self.mark(32,1, color)
@@ -153,19 +156,19 @@ class LedStrip:
 		for x in HOUSE:
 			for y in reversed(range(4,9)):
 				if (y == 5) or ((y > 5 or y==4) and x > HOUSE[0] and x < HOUSE[4])  :
-					self.mark(x,y,self.color_teal)
-			self.mark(HOUSE[2],3,self.color_teal)
+					self.mark(x,y,self.color_wheat)
+			self.mark(HOUSE[2],3,self.color_wheat)
 		self.pixels.show()
 
 	def draw_panels(self):
 		for x in SOLAR:
 			for y in reversed(range(1,9)):
 				if x == 30 and y < 5:
-					self.mark(x,y,self.color_teal)
+					self.mark(x,y,self.color_gray)
 				if x == 31 and y in (3,4,5,6):
-					self.mark(x,y,self.color_teal)
+					self.mark(x,y,self.color_gray)
 				if x == 32 and y in (5,6,7,8):
-					self.mark(x,y,self.color_teal)
+					self.mark(x,y,self.color_gray)
 		self.pixels.show()
 
 	def draw_grid(self):
