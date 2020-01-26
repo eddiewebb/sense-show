@@ -163,7 +163,7 @@ class LedStrip:
 	def draw_plug(self):
 		for x in HOUSE:
 			for y in reversed(range(1,9)):
-				if y == 4 or ( y in range(1,7) and x in(HOUSE[1],HOUSE[-2]) ) or ( y > 3 and x == HOUSE[2] ) :
+				if y == 4 or ( y in range(2,7) and x in(HOUSE[1],HOUSE[-2]) ) or ( y > 3 and x == HOUSE[2] ) :
 					self.mark(x,y,self.color_wood)
 		self.pixels.show()
 
