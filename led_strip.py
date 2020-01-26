@@ -27,7 +27,7 @@ class LedStrip:
 	color_red=(80,0,0)
 	color_purple=(128,0,128)
 	color_gray=(112,128,144)
-	color_wood=(222,184,135)
+	color_wood=(139,69,19)
 
 
 
