@@ -135,7 +135,7 @@ class LedStrip:
 		now = self.pixels[id]
 		if isinstance(now, list):
 			log.debug("converting leist")
-			now = tuple(i*brightness for i in now)
+			now = tuple(i*(1/brightness) for i in now)
 		log.debug("Pixel currently %s",now)
 		if now != only:
 			log.debug("will not repalce with %s", color)
