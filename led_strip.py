@@ -8,7 +8,7 @@ from datetime import datetime
 import logging
 logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
 log = logging.getLogger('senseshow.main')
-
+brightness = 0.5
 
 GRID=[1,2,3]
 GFLOW=[3,4,5,6,7,8,9,10,11,12,13,14,15]
@@ -34,10 +34,6 @@ class LedStrip:
 	def __init__(self):
 		# Startup
 		self.set_pixels()
-
-		self.pixels[1] = self.off
-		print(self.pixels[1])
-		exit()
 		self.flow(1,32,8000,8000,self.color_teal, False)
 		self.flow(32,1,8000,8000,self.color_purple, False)
 		self.waterfall(1,8)
@@ -138,7 +134,8 @@ class LedStrip:
 		id=self.get_id_by_coordinates(x,y)
 		now = self.pixels[id]
 		if isinstance(now, list):
-			now = tuple(now)
+			log.debug("converting leist")
+			now = tuple(i*brightness for i in now)
 		log.debug("Pixel currently %s",now)
 		if now != only:
 			log.debug("will not repalce with %s", color)
