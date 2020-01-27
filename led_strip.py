@@ -136,7 +136,7 @@ class LedStrip:
 		if isinstance(now, list):
 			#log.debug("converting leist")
 			now = tuple(int(i*(1/brightness)) for i in now)
-		log.debug("Pixel currently %s, will only replace if %s",now, only)
+		#log.debug("Pixel currently %s, will only replace if %s",now, only)
 		if now != only:
 			#log.debug("will not repalce with %s", color)
 			return
