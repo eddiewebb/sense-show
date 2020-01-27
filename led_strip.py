@@ -36,7 +36,7 @@ class LedStrip:
 		self.set_pixels()
 
 		self.pixels[1] = self.color_red
-		print(self.pixels.buf[i])
+		print(self.pixels.buf[1])
 		exit()
 		self.flow(1,32,8000,8000,self.color_teal, False)
 		self.flow(32,1,8000,8000,self.color_purple, False)
