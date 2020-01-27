@@ -61,7 +61,6 @@ class LedStrip:
 			import board
 			import neopixel			
 			self.pixels = neopixel.NeoPixel(board.D18, 256, auto_write=False, brightness=0.5)
-			self.pixels.begin()
 
 
 	def get_id_by_coordinates(self,x,y):
