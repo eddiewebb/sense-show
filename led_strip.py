@@ -19,12 +19,12 @@ SOLAR=[30,31,32]
 class LedStrip:
 
 
-	off=0x000000
+	off=(0,0,0)
 	color_green=(0,80,0)
 	color_gold=(255,215,0)
 	color_orange=(80,40,0)
 	color_teal=(0,80,80)
-	color_red=0x800000
+	color_red=(80,0,0)
 	color_purple=(128,0,128)
 	color_gray=(112,128,144)
 	color_wood=(139,69,19)
