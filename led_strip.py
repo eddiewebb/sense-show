@@ -35,6 +35,9 @@ class LedStrip:
 		# Startup
 		self.set_pixels()
 
+		self.pixels[1] = self.color_red
+		print(self.pixels[1])
+		exit()
 		self.flow(1,32,8000,8000,self.color_teal, False)
 		self.flow(32,1,8000,8000,self.color_purple, False)
 		self.waterfall(1,8)
@@ -134,9 +137,8 @@ class LedStrip:
 	def safe_set(self, x, y, color, only=(0,0,0)):
 		id=self.get_id_by_coordinates(x,y)
 		now = self.pixels[id]
-		print(now)
 		if isinstance(now, list):
-			now = now[0]
+			now = tuple(now)
 		log.debug("Pixel currently %s",now)
 		if now != only:
 			log.debug("will not repalce with %s", color)
