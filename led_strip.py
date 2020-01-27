@@ -132,9 +132,12 @@ class LedStrip:
 
 	def safe_set(self, x, y, color, only=(0,0,0)):
 		id=self.get_id_by_coordinates(x,y)
-		now = self.pixels.getPixelColor(id)
+		now = self.pixels[id]
+		log.debug("Pixel currently %s",now)
 		if now != only:
+			log.debug("will not repalce with %s", color)
 			return
+		log.debug("will replace with %s", color)
 		self.pixels[id] = color
 
 

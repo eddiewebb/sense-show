@@ -78,10 +78,6 @@ class Pixels():
 	def deinit(self):
 		self.fill((0,0,0))
 
-	def getPixelColor(self,id):
-		return self.__getitem__(id)
-
-
 
 	def get_id_by_coordinates(self,x,y):
 		id=0
