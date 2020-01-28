@@ -6,7 +6,7 @@ import logging
 from queue import Queue
 from collections import deque
 import sense_energy
-from tqdm import tqdm
+#from tqdm import tqdm
 from dotenv import load_dotenv
 import led_strip
 
