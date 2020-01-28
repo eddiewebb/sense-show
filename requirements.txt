@@ -1,0 +1,7 @@
+RPi.GPIO==0.7.0
+Adafruit-Blinka==3.7.1
+adafruit-circuitpython-neopixel==4.1.0
+aiohttp==3.6.2
+board==1.0
+sense-energy==0.7.0
+python-dotenv==0.10.5

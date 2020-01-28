@@ -30,9 +30,10 @@ From Grid:  12%|█▏        | 1.75k/15.0k [00:00<00:00, 1.67Mwatts/s]
 THis project includes the files needed to register this script as an always running daemon. THis will restart on crash or power loss.
 
 1) git clone this repo to your pi, using `/home/pi/sense-show` as checkout dir will save editing files
+2) install python libs `sudo pip3 install -r requirements.txt`
 2) Create a `.env` file in the checkout dir containing your `SENSE_USER` and `SENSE_PASSWD`.
 2) Optionally comment out the `git pull` in `start.sh` if script should not auto update itself.
-2) cd into `raspberrypi` directory, and confirm paths in senseshow.service, and run `install.sh` 
+2) cd into `raspberrypi` directory, and confirm paths in senseshow.service, and run `install.sh` this will install python-dev and register service with system daemon.
 3) To test it run `sudo systemctl start senseshow.service` and then `systemctl status senseshow.service` and or `tail -f /home/pi/sense-show/sense-debug.log` to make sure everything works.
 4) Unplug pi and plug it back in, wait ~30 seconds and confirm everythign started, if not, repeat last step.
 
@@ -77,3 +78,10 @@ Orange/Yellow LEDs will flow from panels, through house (reduced by usage) and b
 Red LEDs will flow from grid to house, and feeding panels during shade/night.  For instance here my idle house is using minimum electricity and feeding about 8 watts to panels at night. Lights are moving left (grid) to right( house and panels)
 
 ![NIghtly consumption](/assets/night.jpg)
+
+
+
+## Debugging & Logs
+- logging configured in the app writes to `sense-debug.log`
+- stdout/stderr when running as a service can be obtained by `journalctl -u senseshow.service --since today`  (or remove date filter)
+- status, stop, start with `sudo systemctl <action> senseshow.service`
