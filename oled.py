@@ -36,6 +36,8 @@ class OLED:
 		self.oled.image(image)
 		self.oled.show()
 
+	def present(self, sense_data):
+		self.write("Solar: {}\nUsage: {}".format(data['d_solar_w'],data['d_w']))
 
 class mock_OLED:
 

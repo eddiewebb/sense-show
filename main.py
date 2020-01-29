@@ -138,7 +138,7 @@ def update_led_panel():
 			# set_tqdm(use,data['d_w'])
 			# set_tqdm(grid,data['grid_w'])
 
-			screen.write("Solar: {}\nUsage: {}".format(data['d_solar_w'],data['d_w']))
+			screen.present(data)
 			# flash solar prohress
 			if data['d_solar_w'] < 0:
 				led_panel.show_sun(False)
