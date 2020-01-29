@@ -9,6 +9,7 @@ import sense_energy
 #from tqdm import tqdm
 from dotenv import load_dotenv
 import led_strip
+import oled
 
 
 max_solar 	   = 8000
@@ -45,6 +46,7 @@ def launchAndWait():
 		data_queue.task_done()
 	
 	# start brand new!
+	screen = oled.OLED()
 	led_panel = led_strip.LedStrip()
 
 	for function in [update_sense_data, update_led_panel]:
