@@ -17,6 +17,7 @@ max_use   	   = 15000
 flip_iterations= 5
 data_queue    = Queue()
 led_panel        = None
+screen			 = None
 threads = list()
 
 logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
@@ -33,7 +34,7 @@ def main():
 	log.info("all done")
 
 def launchAndWait():
-	global led_panel, abort_threads, threads
+	global led_panel, abort_threads, threads, screen
 
 	log.info("Launching threads")
 	
@@ -137,6 +138,7 @@ def update_led_panel():
 			# set_tqdm(use,data['d_w'])
 			# set_tqdm(grid,data['grid_w'])
 
+			screen.write("Solar: {}\nUsage: {}".format(data['d_solar_w'],data['d_w']))
 			# flash solar prohress
 			if data['d_solar_w'] < 0:
 				led_panel.show_sun(False)
