@@ -37,7 +37,7 @@ class OLED:
 		self.oled.show()
 
 	def present(self, sense_data):
-		self.write("Solar: {}\nUsage: {}".format(data['d_solar_w'],data['d_w']))
+		self.write("Solar: {}\nUsage: {}".format(sense_data['d_solar_w'],sense_data['d_w']))
 
 class mock_OLED:
 
