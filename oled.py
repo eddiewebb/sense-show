@@ -89,10 +89,10 @@ class OLED:
 		return ceil((val / max)*width)
 
 	def scaled(self,val):
-		if val > 10000:
+		if abs(val) > 10000:
 			return "{} Mw".format(round(val/10000,2))
-		elif val > 1000:
-			return "{} Kw".format(round(val/10000,2))
+		elif abs(val) > 1000:
+			return "{} Kw".format(round(val/1000,2))
 		else:
 			return "{} w".format(val)
 
