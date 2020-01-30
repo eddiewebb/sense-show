@@ -72,17 +72,18 @@ class OLED:
 			# we are consuming, show bar starting left of center
 			x1 = x1 - self.pixel_width_of(sense_data['grid_w'], sense_data['max_use'], width)
 			# draw triangle poiinting left
-			draw.pieslice((x1-10,y_start,x1,y_start+height),315,45, fill=1, outline=1)
+			draw.pieslice((x1-height,y_start,x1,y_start+height),315,45, fill=1, outline=1)
 			log.debug("plot x1 at %d",x1)
 		if sense_data['d_solar_w'] > 0:
 			#we're not consuing, we shouldbe prodincg
 			x2 = x2 + self.pixel_width_of(sense_data['d_solar_w'], sense_data['max_solar'],width)
 			log.debug("plot x2 at %d",x2)
+			draw.pieslice((x2,y_start,x2+height,y_start+height),135,225, fill=1, outline=1)
 		log.debug("use plot as (%d,%d),(%d,%d)",x1, y1, x2, y2)
 		#fill value left and or right with white 
 		draw.rectangle((x1, y1, x2, y2),outline=1, fill=1)	
 		# center line
-		draw.line((50,y_start, 50, y_start+height), fill=0, width=2)
+		draw.line((64,y_start, 64, y_start+height), fill=0, width=2)
 
 	def pixel_width_of(self, val, max, width):
 		return ceil((val / max)*width)
