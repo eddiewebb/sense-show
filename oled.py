@@ -49,15 +49,16 @@ class OLED:
 	def draw_charts(self, draw, sense_data):
 		width = 50
 		height = 10
+		chart_start = self.width/4
 		solar_pixels = round((sense_data['d_solar_w'] / sense_data['max_solar'])*width)
-		draw.rectangle((self.width/4,0, width, height),outline=1, fill=0)
-		draw.rectangle((self.width/4,0, solar_pixels, height),outline=1, fill=1)
+		draw.rectangle((chart_start,0, chart_start + width, height),outline=1, fill=0)
+		draw.rectangle((chart_start,0, chart_start + solar_pixels, height),outline=1, fill=1)
 		text = "Solar: {}".format(sense_data['d_solar_w'])
 		draw.text((0,0), text, font=self.font, fill=1)
 		use_pixels =round((sense_data['d_w'] / sense_data['max_use']) * width)
-		draw.rectangle((self.width/4,10, width, height),outline=1, fill=0)
-		draw.rectangle((self.width/4,10, use_pixels, height),outline=1, fill=1)
-		text = "Usage: {}".format(sense_data['d_solar_w'])
+		draw.rectangle((chart_start,10, chart_start + width, 10 + height),outline=1, fill=0)
+		draw.rectangle((chart_start,10, chart_start + use_pixels, 10 +  height),outline=1, fill=1)
+		text = "Usage: {}   ({} from grid)".format(sense_data['d_w'], sense_data['d_grid_w'])
 		draw.text((0,10), text, font=self.font, fill=1)
 
 
