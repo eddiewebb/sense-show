@@ -57,11 +57,13 @@ class OLED:
 		height = 10
 		width = 50 
 		text = "Usage: {}".format(self.scaled(sense_data['d_w']))
-		draw.text((0,0), text, font=self.font, fill=1)
-		text = "Grid: {} ".format(self.scaled(sense_data['grid_w']))
+		pixs = draw.textsize(text,font=self.font)
+		draw.text(((self.width - pixs[0])/2,0), text, font=self.font, fill=1)
+		text = "> {} ".format(self.scaled(sense_data['grid_w']))
 		draw.text((0,10), text, font=self.font, fill=1)
-		text = "Solar: {} ".format(self.scaled(sense_data['d_solar_w']))
-		draw.text((self.width/2,10), text, font=self.font, fill=1)
+		text = "{} <".format(self.scaled(sense_data['d_solar_w']))		
+		pixs = draw.textsize(text,font=self.font)
+		draw.text((self.width - pixs[0],10), text, font=self.font, fill=1)
 
 		# draw full empty box
 		draw.rectangle((0,y_start, self.width-1, y_start + height),outline=1, fill=0)		
@@ -90,9 +92,9 @@ class OLED:
 
 	def scaled(self,val):
 		if abs(val) > 10000:
-			return "{} Mw".format(round(val/10000,2))
+			return "{} Mw".format(round(val/10000,1))
 		elif abs(val) > 1000:
-			return "{} Kw".format(round(val/1000,2))
+			return "{} Kw".format(round(val/1000,1))
 		else:
 			return "{} w".format(val)
 
