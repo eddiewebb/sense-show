@@ -9,13 +9,15 @@ import sense_energy
 #from tqdm import tqdm
 from dotenv import load_dotenv
 import led_strip
+import oled
 
 
-max_solar 	   = 8000
-max_use   	   = 15000
+max_solar 	   = 10000
+max_use   	   = 10000
 flip_iterations= 5
 data_queue    = Queue()
 led_panel        = None
+screen			 = None
 threads = list()
 
 logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
@@ -32,7 +34,7 @@ def main():
 	log.info("all done")
 
 def launchAndWait():
-	global led_panel, abort_threads, threads
+	global led_panel, abort_threads, threads, screen
 
 	log.info("Launching threads")
 	
@@ -45,6 +47,7 @@ def launchAndWait():
 		data_queue.task_done()
 	
 	# start brand new!
+	screen = oled.OLED()
 	led_panel = led_strip.LedStrip()
 
 	for function in [update_sense_data, update_led_panel]:
@@ -99,7 +102,6 @@ def update_sense_data():
 				break
 			sense.update_realtime()
 			data = sense.get_realtime()
-			log.debug("Latest Data From: {}".format(time.ctime(data['epoch'])))
 			#qDepth = solar_queue.qsize() + data_queue.qsize()
 			#if qDepth > 0:
 			#	tqdm.write("Queuedepth: " + str(qDepth))
@@ -129,12 +131,15 @@ def update_led_panel():
 				led_panel.pixels.deinit()
 				break
 			else:
-				log.debug("new dtata to show")
+				log.debug("Display Data From: {}".format(time.ctime(data['epoch'])))
 			# Set console indicators	
 			# set_tqdm(solar,data['d_solar_w'])
 			# set_tqdm(use,data['d_w'])
 			# set_tqdm(grid,data['grid_w'])
 
+			data['max_solar'] = max_solar
+			data['max_use'] = max_use
+			screen.present(data)
 			# flash solar prohress
 			if data['d_solar_w'] < 0:
 				led_panel.show_sun(False)

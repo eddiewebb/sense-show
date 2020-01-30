@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt-get install -y python3 python3-pip python3-smbus
+sudo apt-get install -y python3 python3-pip python3-smbus python3-pil
 sudo apt-get install -y i2c-tools
 sudo pip3 install --upgrade setuptools
 sudo pip3 install -r ../requirements.txt

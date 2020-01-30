@@ -1,6 +1,8 @@
 [Unit]
 Description=SenseShow
 After=networking.service
+After=nss-lookup.target
+
 
 [Service]
 ExecStart=/home/pi/sense-show/start.sh
