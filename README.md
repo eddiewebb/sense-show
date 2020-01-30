@@ -2,7 +2,8 @@
 
 Simple python script to visual Sense Energy consumption & solar generation on an LED matrix.
 
-Uses a raspberry 3 and python.
+Uses a raspberry 3, leds, and python.
+![Picture of led panel, raspberry pi zero w and screen](/assets/overproduce-oled.jpg)
 
 ## Running it locally, without LEDs
 `SENSE_TEST=True SENSE_USER="email" SENSE_PASSWD='5ecr!ts' sudo -E python3 main.py`
@@ -30,10 +31,9 @@ From Grid:  12%|█▏        | 1.75k/15.0k [00:00<00:00, 1.67Mwatts/s]
 THis project includes the files needed to register this script as an always running daemon. THis will restart on crash or power loss.
 
 1) git clone this repo to your pi, using `/home/pi/sense-show` as checkout dir will save editing files
-2) install python libs `sudo pip3 install -r requirements.txt`
 2) Create a `.env` file in the checkout dir containing your `SENSE_USER` and `SENSE_PASSWD`.
 2) Optionally comment out the `git pull` in `start.sh` if script should not auto update itself.
-2) cd into `raspberrypi` directory, and confirm paths in senseshow.service, and run `install.sh` this will install python-dev and register service with system daemon.
+2) cd into `raspberrypi` directory, and confirm paths in senseshow.service, and run `install.sh` this will install python dependencies and register service with system daemon.
 3) To test it run `sudo systemctl start senseshow.service` and then `systemctl status senseshow.service` and or `tail -f /home/pi/sense-show/sense-debug.log` to make sure everything works.
 4) Unplug pi and plug it back in, wait ~30 seconds and confirm everythign started, if not, repeat last step.
 
