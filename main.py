@@ -12,7 +12,7 @@ import led_strip
 import oled
 
 
-max_solar 	   = 8000
+max_solar 	   = 10000
 max_use   	   = 15000
 flip_iterations= 5
 data_queue    = Queue()
@@ -138,6 +138,8 @@ def update_led_panel():
 			# set_tqdm(use,data['d_w'])
 			# set_tqdm(grid,data['grid_w'])
 
+			data['max_solar'] = max_solar
+			data['max_use'] = max_use
 			screen.present(data)
 			# flash solar prohress
 			if data['d_solar_w'] < 0:

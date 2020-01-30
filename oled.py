@@ -7,6 +7,8 @@ log = logging.getLogger('senseshow.main')
 
 class OLED:
 
+	width = 128
+	height = 32
 	def __init__(self):
 		# Startup
 		self.config()
@@ -16,8 +18,8 @@ class OLED:
 	def config(self):	
 		if os.getenv("SENSE_TEST"):
 			log.debug("Using console printout instead of OLED screen")
-			import mock_pixels
-			self.oled = mock_OLED(128,32)
+			from unittest.mock import Mock
+			self.oled = Mock()
 		else:
 			log.debug("Using LED panel via neopixel")
 			import board
@@ -29,15 +31,35 @@ class OLED:
 			self.oled.show()
 		self.font = ImageFont.load_default()
 
+	
 	def write(self, text):
-		image = Image.new('1', (self.oled.width, self.oled.height))
+		image = Image.new('1', (self.width, self.height))
 		draw = ImageDraw.Draw(image)
-		draw.text((0,0), text, font=self.font, fill=255)
+		draw.text((10,0), text, font=self.font, fill=255)
+		self.oled.image(image)
+		self.oled.show()
+	
+	def present(self, sense_data):
+		image = Image.new('1', (self.width, self.height))
+		draw = ImageDraw.Draw(image)
+		self.draw_charts(draw, sense_data)
 		self.oled.image(image)
 		self.oled.show()
 
-	def present(self, sense_data):
-		self.write("Solar: {}\nUsage: {}".format(sense_data['d_solar_w'],sense_data['d_w']))
+	def draw_charts(self, draw, sense_data):
+		width = 50
+		height = 10
+		solar_pixels = round((sense_data['d_solar_w'] / sense_data['max_solar'])*width)
+		draw.rectangle((self.width/4,0, width, height),outline=1, fill=0)
+		draw.rectangle((self.width/4,0, solar_pixels, height),outline=1, fill=1)
+		text = "Solar: {}".format(sense_data['d_solar_w'])
+		draw.text((0,0), text, font=self.font, fill=255)
+		use_pixels =round((sense_data['d_w'] / sense_data['max_use']) * width)
+		draw.rectangle((self.width/4,10, width, height),outline=1, fill=0)
+		draw.rectangle((self.width/4,10, use_pixels, height),outline=1, fill=1)
+		text = "Usage: {}".format(sense_data['d_solar_w'])
+		draw.text((10,0), text, font=self.font, fill=255)
+
 
 class mock_OLED:
 
