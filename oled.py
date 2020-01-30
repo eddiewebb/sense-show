@@ -72,7 +72,7 @@ class OLED:
 			# we are consuming, show bar starting left of center
 			x1 = x1 - self.pixel_width_of(sense_data['grid_w'], sense_data['max_use'], width)
 			# draw triangle poiinting left
-			draw.polygon()
+			draw.pieslice((x1-10,y_start,x1,y_start+height),315,45, fill=1, outline=1)
 			log.debug("plot x1 at %d",x1)
 		if sense_data['d_solar_w'] > 0:
 			#we're not consuing, we shouldbe prodincg
