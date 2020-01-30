@@ -102,7 +102,6 @@ def update_sense_data():
 				break
 			sense.update_realtime()
 			data = sense.get_realtime()
-			log.debug("Latest Data From: {}".format(time.ctime(data['epoch'])))
 			#qDepth = solar_queue.qsize() + data_queue.qsize()
 			#if qDepth > 0:
 			#	tqdm.write("Queuedepth: " + str(qDepth))
@@ -132,7 +131,7 @@ def update_led_panel():
 				led_panel.pixels.deinit()
 				break
 			else:
-				log.debug("new dtata to show")
+				log.debug("Display Data From: {}".format(time.ctime(data['epoch'])))
 			# Set console indicators	
 			# set_tqdm(solar,data['d_solar_w'])
 			# set_tqdm(use,data['d_w'])
