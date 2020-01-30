@@ -78,6 +78,7 @@ class OLED:
 			log.debug("plot x2 at %d",x2)
 		log.debug("use plot as (%d,%d),(%d,%d)",x1, y1, x2, y2)
 		draw.rectangle((x1, y1, x2, y2),outline=1, fill=1)	
+		draw.line((50,y_start, 50, y_start+height), fill=1, width=2)
 
 	def pixel_width_of(self, val, max, width):
 		return ceil((val / max)*width)
