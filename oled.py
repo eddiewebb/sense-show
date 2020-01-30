@@ -58,7 +58,7 @@ class OLED:
 		use_pixels =round((sense_data['d_w'] / sense_data['max_use']) * width)
 		draw.rectangle((chart_start,10, chart_start + width, 10 + height),outline=1, fill=0)
 		draw.rectangle((chart_start,10, chart_start + use_pixels, 10 +  height),outline=1, fill=1)
-		text = "Usage: {}   ({} from grid)".format(sense_data['d_w'], sense_data['d_grid_w'])
+		text = "Usage: {}   ({} from grid)".format(sense_data['d_w'], sense_data['grid_w'])
 		draw.text((0,10), text, font=self.font, fill=1)
 
 
