@@ -13,7 +13,7 @@ import oled
 
 
 max_solar 	   = 10000
-max_use   	   = 15000
+max_use   	   = 10000
 flip_iterations= 5
 data_queue    = Queue()
 led_panel        = None

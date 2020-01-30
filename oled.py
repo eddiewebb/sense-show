@@ -1,4 +1,5 @@
 import os
+from math import ceil
 import logging
 from PIL import Image, ImageFont, ImageDraw
 logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
@@ -64,7 +65,8 @@ class OLED:
 
 		# draw full empty box
 		draw.rectangle((0,y_start, self.width-1, y_start + height),outline=1, fill=0)		
-		y1 = y2 = y_start + height
+		y1 = y_start
+		y2 = y_start + height
 		x1 = x2 = self.width/2
 		if sense_data['grid_w'] > 0:
 			# we are consuming, show bar starting left of center
@@ -74,10 +76,11 @@ class OLED:
 			#we're not consuing, we shouldbe prodincg
 			x2 = x2 + self.pixel_width_of(sense_data['d_solar_w'], sense_data['max_solar'],width)
 			log.debug("plot x2 at %d",x2)
+		log.debug("use plot as (%d,%d),(%d,%d)",x1, y1, x2, y2)
 		draw.rectangle((x1, y1, x2, y2),outline=1, fill=1)	
 
 	def pixel_width_of(self, val, max, width):
-		return round((val / max)*width)
+		return ceil((val / max)*width)
 
 class mock_OLED:
 
