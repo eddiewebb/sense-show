@@ -47,7 +47,7 @@ class OLED:
 		self.oled.show()
 
 	def draw_charts(self, draw, sense_data):
-		y_start=22
+		y_start=21
 		height = 10
 		width = 50 # either half of chart
 		#chart_start = self.width/4
@@ -63,15 +63,17 @@ class OLED:
 		draw.text((0,10), text, font=self.font, fill=1)
 
 		# draw full empty box
-		draw.rectangle((0,y_start, self.width, y_start + height),outline=1, fill=0)		
+		draw.rectangle((0,y_start, self.width-1, y_start + height),outline=1, fill=0)		
 		y1 = y2 = y_start + height
 		x1 = x2 = self.width/2
 		if sense_data['grid_w'] > 0:
 			# we are consuming, show bar starting left of center
 			x1 = x1 - self.pixel_width_of(sense_data['grid_w'], sense_data['max_use'], width)
+			log.debug("plot x1 at %d",x1)
 		if sense_data['d_solar_w'] > 0:
 			#we're not consuing, we shouldbe prodincg
 			x2 = x2 + self.pixel_width_of(sense_data['d_solar_w'], sense_data['max_solar'],width)
+			log.debug("plot x2 at %d",x2)
 		draw.rectangle((x1, y1, x2, y2),outline=1, fill=1)	
 
 	def pixel_width_of(self, val, max, width):
