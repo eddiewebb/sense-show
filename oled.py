@@ -31,7 +31,6 @@ class OLED:
 			self.oled.fill(0)
 			self.oled.show()
 		self.font = ImageFont.load_default()
-
 	
 	def write(self, text):
 		image = Image.new('1', (self.width, self.height))
@@ -39,7 +38,13 @@ class OLED:
 		draw.text((10,0), text, font=self.font, fill=255)
 		self.oled.image(image)
 		self.oled.show()
-	
+	"""
+	Usage:  XXX
+	Grid:          Solar: 
+	[.       <||||||||>.            ]
+
+
+	"""
 	def present(self, sense_data):
 		image = Image.new('1', (self.width, self.height))
 		draw = ImageDraw.Draw(image)
@@ -50,18 +55,13 @@ class OLED:
 	def draw_charts(self, draw, sense_data):
 		y_start=21
 		height = 10
-		width = 50 # either half of chart
-		#chart_start = self.width/4
-		solar_pixels = round((sense_data['d_solar_w'] / sense_data['max_solar'])*width)
-		#draw.rectangle((chart_start,0, chart_start + width, height),outline=1, fill=0)
-		#draw.rectangle((chart_start,0, chart_start + solar_pixels, height),outline=1, fill=1)
-		text = "Solar: {}".format(sense_data['d_solar_w'])
+		width = 50 
+		text = "Usage: {}".format(self.scaled(sense_data['d_w']))
 		draw.text((0,0), text, font=self.font, fill=1)
-		use_pixels =round((sense_data['d_w'] / sense_data['max_use']) * width)
-		#draw.rectangle((chart_start,10, chart_start + width, 10 + height),outline=1, fill=0)
-		#draw.rectangle((chart_start,10, chart_start + use_pixels, 10 +  height),outline=1, fill=1)
-		text = "Usage: {}   ({} from grid)".format(sense_data['d_w'], sense_data['grid_w'])
+		text = "Grid: {} ".format(self.scaled(sense_data['grid_w']))
 		draw.text((0,10), text, font=self.font, fill=1)
+		text = "Solar: {} ".format(self.scaled(sense_data['d_solar_w']))
+		draw.text((self.width/2,10), text, font=self.font, fill=1)
 
 		# draw full empty box
 		draw.rectangle((0,y_start, self.width-1, y_start + height),outline=1, fill=0)		
@@ -87,6 +87,15 @@ class OLED:
 
 	def pixel_width_of(self, val, max, width):
 		return ceil((val / max)*width)
+
+	def scaled(self,val):
+		if val > 10000:
+			return "{} Mw".format(round(val/10000,2))
+		elif val > 1000:
+			return "{} Kw".format(round(val/10000,2))
+		else:
+			return "{} w".format(val)
+
 
 class mock_OLED:
 
