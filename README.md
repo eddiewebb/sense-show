@@ -41,9 +41,9 @@ THis project includes the files needed to register this script as an always runn
 
 ## Parts
 
-### Raspberry pi
+### Raspberry pi (zero is fine)
 
-I assume you ahve one if you're here, but if you're even a little interested they are a great investment for learning/tinkering, and [you can get a full rig for < $50](https://amzn.to/3aJ90TA).
+I assume you have one if you're here, but if you're even a little interested they are a great investment for learning/tinkering, and [you can get a full 3B+ rig for < $50](https://amzn.to/3aJ90TA) or a [zero wireless for $25](https://amzn.to/36FntwW).
 
 ### Leds
 
@@ -58,11 +58,15 @@ I have Sense and love it, Schneider electric seems to be reselling as "Wiser Ene
 
 [Sense Energy & Solar monitor![Sense Energy Monitor](https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B075K51T9X&Format=_SL160_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=eddiewebb-20&language=en_US)](https://amzn.to/38BcGVD)
 
-## LED Display
+### Pi OLED Screen
+[32x128 pixel monochrome screen![pioled 32x128 screen](https://ir-na.amazon-adsystem.com/e/ir?t=eddiewebb-20&language=en_US&l=li2&o=1&a=B07T4LGTWT)](https://amzn.to/2RG1KR1)
+
+
+## LED Panel
 
 ### Objects
 - Grid - depicted with tower on left
-- House - depicted with blue house in center
+- Plug - depicted with electrical plug in center
 - Panels - depicted by blue stripes on right
 - Sun - Small yellow dot abov panels
 - Energy Flow Green, Yellow or Red leds flow in the direction of energy, sized base on total watts.
