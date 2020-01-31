@@ -41,6 +41,8 @@ THis project includes the files needed to register this script as an always runn
 
 ## Parts
 
+![Wiring Schematic/Breadboard Visual](/assets/sense-show_bb.png)
+
 ### Raspberry pi (zero is fine)
 
 I assume you have one if you're here, but if you're even a little interested they are a great investment for learning/tinkering, and [you can get a full 3B+ rig for < $50](https://amzn.to/3aJ90TA) or a [zero wireless for $25](https://amzn.to/36FntwW).
