@@ -3,7 +3,8 @@
 Simple python script to visual Sense Energy consumption & solar generation on an LED matrix.
 
 Uses a raspberry 3, leds, and python.
-![Picture of led panel, raspberry pi zero w and screen](/assets/overproduce-oled.jpg)
+
+[![Picture of led panel, raspberry pi zero w and screen](https://img.youtube.com/vi/Jnkek4CRb7w/0.jpg)](https://www.youtube.com/watch?v=Jnkek4CRb7w)
 
 ## Running it locally, without LEDs
 `SENSE_TEST=True SENSE_USER="email" SENSE_PASSWD='5ecr!ts' sudo -E python3 main.py`
