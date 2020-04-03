@@ -92,3 +92,17 @@ Red LEDs will flow from grid to house, and feeding panels during shade/night.  F
 - logging configured in the app writes to `sense-debug.log`
 - stdout/stderr when running as a service can be obtained by `journalctl -u senseshow.service --since today`  (or remove date filter)
 - status, stop, start with `sudo systemctl <action> senseshow.service`
+
+
+
+
+## pvoutput.org support.
+
+I also added live updates froma. related project.
+
+set tjese values in `.env`
+
+```
+PVOUTPUT_KEY="yourkeyfrom pvoutput.org"
+PVOUTPUT_ID="siteid"
+```

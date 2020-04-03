@@ -14,6 +14,9 @@ sudo cp senseshow.service /etc/systemd/system/senseshow.service
 sudo systemctl enable senseshow.service
 
 
+## send pvoutput data
+echo "*/5 * * * *  python3 $(pwd)/pvoutput.py" | sudo crontab -
+
 
 
 ## Notes
