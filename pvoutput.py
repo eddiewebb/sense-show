@@ -11,7 +11,8 @@ def main():
 	if os.getenv("PVOUTPUT_KEY"):
 		trend = SenseTrend()
 		pv = PvOutput()
-		pv.postLive(trend.asLive())
+		pv.postLive(trend.consumption())
+		pv.postLive(trend.generation())
 	else:
 		print("To send stats to pvoutput.org, add key and id as described in readme.")
 
@@ -31,8 +32,8 @@ class PvOutput():
 
 
 class SenseTrend():
-
 	def __init__(self):
+		self.start=datetime.datetime.now()
 		user = os.getenv("SENSE_USER")
 		passwd = os.getenv("SENSE_PASSWD")	
 		self.sense = sense_energy.Senseable(api_timeout=10)
@@ -40,14 +41,24 @@ class SenseTrend():
 
 
 	def load_live_status(self):
-		self.start=datetime.datetime.now()
 		asString = self.start.strftime('%Y-%m-%dT%X')
 		print("Date used with sense: " + asString)
 		self.data=self.sense.api_call('app/history/trends?monitor_id=50403&scale=DAY&start=' + asString )
 		self.sense.update_realtime()
 		self.realtime = self.sense.get_realtime()
 
-	def asLive(self):
+	def consumption(self):
+		self.load_live_status()
+		peak = self.get_peak_production()
+		payload = {
+			"d":self.get_date_as('%Y%m%d'),
+			"t":self.get_date_as('%H:%M'),
+			"v3":self.get_daily_consumption(),
+			"v4":self.get_realtime_consumption()
+		}
+		return payload
+
+	def generation(self):
 		self.load_live_status()
 		peak = self.get_peak_production()
 		payload = {
@@ -55,8 +66,6 @@ class SenseTrend():
 			"t":self.get_date_as('%H:%M'),
 			"v1":self.get_daily_production(),
 			"v2":self.get_realtime_production(),
-			"v3":self.get_daily_consumption(),
-			"v4":self.get_realtime_consumption(),
 			"v6": sum(self.realtime['voltage'])
 		}
 		return payload
