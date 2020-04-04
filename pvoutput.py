@@ -39,17 +39,17 @@ class SenseTrend():
 		passwd = os.getenv("SENSE_PASSWD")	
 		self.sense = sense_energy.Senseable(api_timeout=10)
 		self.sense.authenticate(user, passwd)
+		self.load_live_status()
 
 
 	def load_live_status(self):
 		asString = self.get_sense_start().strftime('%Y-%m-%dT%X')
 		print("Date used with sense: " + asString)
-		self.data=self.sense.api_call('app/history/trends?monitor_id=50403&scale=DAY&start=' + asString )
 		self.sense.update_realtime()
+		self.data=self.sense.api_call('app/history/trends?monitor_id=50403&scale=DAY&start=' + asString )
 		self.realtime = self.sense.get_realtime()
 
 	def consumption(self):
-		self.load_live_status()
 		peak = self.get_peak_production()
 		payload = {
 			"d":self.get_date_as('%Y%m%d'),
@@ -60,7 +60,6 @@ class SenseTrend():
 		return payload
 
 	def generation(self):
-		self.load_live_status()
 		peak = self.get_peak_production()
 		payload = {
 			"d":self.get_date_as('%Y%m%d'),
