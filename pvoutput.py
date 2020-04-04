@@ -1,5 +1,6 @@
 import os
 import datetime
+import time
 import requests
 from dotenv import load_dotenv
 import sense_energy
@@ -41,7 +42,7 @@ class SenseTrend():
 
 
 	def load_live_status(self):
-		asString = self.start.strftime('%Y-%m-%dT%X')
+		asString = self.get_sense_start().strftime('%Y-%m-%dT%X')
 		print("Date used with sense: " + asString)
 		self.data=self.sense.api_call('app/history/trends?monitor_id=50403&scale=DAY&start=' + asString )
 		self.sense.update_realtime()
@@ -70,8 +71,16 @@ class SenseTrend():
 		}
 		return payload
 
+	#
+	# Sense decided instead of accepting timezones, you have to muck the start hour to incorpoarte TC offset.
+	def get_sense_start(self):
+		is_dst = time.daylight and time.localtime().tm_isdst > 0
+		utc_offset =  (time.altzone if is_dst else time.timezone)
+		print("Local utc offset including DST imapct is : " + str(utc_offset))
+		return self.start + datetime.timedelta(seconds = utc_offset)
+
 	def get_daily_production(self):
-		return self.data['production']['total']*1000
+		return self.data['production']['total']*1000 if self.data['production']['total']>0 else 0
 
 	def get_realtime_production(self):
 		return self.realtime['d_solar_w'] if self.realtime['d_solar_w']>=0 else 0
