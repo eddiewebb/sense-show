@@ -26,7 +26,7 @@ logging.basicConfig(filename='sense-debug.log')
 log = logging.getLogger('senseshow.main')
 
 def main():
-	log.info("Sense show starting...")
+	log.info("Sense show starting... as PID: %s", os.getpid())
 	signal.signal(signal.SIGINT, exit_gracefully)
 	signal.signal(signal.SIGTERM, exit_gracefully)
 	signal.signal(signal.SIGUSR1, print_status)
@@ -35,29 +35,25 @@ def main():
 	load_dotenv()
 	LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
 	log.setLevel(LOGLEVEL)
-	log.info("Process PID: %d", os.getpid())
 	log.info("Log level: %s",LOGLEVEL)
 
 	launchAndWait()
 
 	log.info("Program ended")
 
+
 def launchAndWait():
 	global led_panel, abort_threads, threads, screen, data_queue
-
-	log.info("Launching threads")
-	
-	data_queue    = Queue(maxsize=5)
+	data_queue    = Queue(maxsize=5) # just big enough to act as a buffer between api and led speeds
 	screen = oled.OLED()
 	led_panel = led_strip.LedStrip()
 
-	
+	log.info("Launching threads")
 	for function in [update_sense_data, update_led_panel]:
 		logging.info("Main    : create and start thread %s.", function)
 		x = threading.Thread(target=function, args=())
 		threads.append(x)
 		x.start()
-
 
 	# this is where logic for healthy run is waiting.
 	for index, thread in enumerate(threads):
@@ -65,7 +61,6 @@ def launchAndWait():
 		logging.info("Main    : thread %d done", index)
 
 	log.info("All threads rejoined, return to main")
-
 
 
 def halt_threads():
@@ -111,6 +106,7 @@ def print_status(signum, frame):
 		log.exception("Unknown exceoption")
 		raise
 
+
 def update_sense_data():
 	try:
 		user = os.getenv("SENSE_USER")
@@ -132,13 +128,14 @@ def update_sense_data():
 						log.debug("reading live feed")
 						data = next(feed)
 						data_queue.put_nowait(data)
-						if data_queue.qsize() > 1:
-							log.debug("Queue size is %d", data_queue.qsize())
 					except StopIteration:
-						log.info("exhausted raltime feed, request another")
+						log.info("exhausted realtime feed, request another")
+						data_queue.queue.clear()
 						break
 					except Full:
-						#log.debug("update_sense_data: Queue full, skipping write.")
+						log.debug("update_sense_data: Queue full, nuking.")
+						data_queue.queue.clear()
+						data_queue.put_nowait(data)
 						pass
 			except:
 				log.warning("Sense library error, likely too many api calls")
@@ -147,6 +144,7 @@ def update_sense_data():
 	except:
 		log.exception("Exception in sense thread")
 		halt_threads()
+
 
 def update_led_panel():
 	try:		 
@@ -163,7 +161,7 @@ def update_led_panel():
 				
 				now = time.time()
 				if now - data['epoch'] > 20: #clocks will diverge a few seconds, so dont se too low
-					log.warn("Time lagging > 1 minute, discarding")
+					log.warn("Time lagging > 20 seconds, discarding")
 					log.info("now: %d", now)
 					log.info("data: %d",data['epoch'])
 					continue
@@ -191,13 +189,11 @@ def update_led_panel():
 		log.exception("uncaught exception in display thread")
 		halt_threads()
 
+
 def set_tqdm(instance, new_value):
 		instance.reset()
 		instance.update(new_value)
 		instance.refresh()
-
-
-
 
 
 if __name__ == '__main__':
