@@ -32,6 +32,7 @@ class LedStrip:
 
 
 	def __init__(self):
+		log.debug("intializinfg LED matrix..")
 		# Startup
 		self.set_pixels()
 		self.flow(1,32,8000,8000,self.color_teal, False)
@@ -43,6 +44,8 @@ class LedStrip:
 		self.flow(16,19,8000,8000,self.color_green, False)
 		self.flow(16,13,8000,8000,self.color_green, False)
 		self.draw_plug()
+
+		log.debug("LED ready!")
 
 
 	def reset(self):

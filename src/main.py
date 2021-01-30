@@ -3,8 +3,9 @@ import signal
 import time
 import threading
 import logging
-from queue import LifoQueue
+from queue import Queue
 from queue import Full
+from queue import Empty
 import sense_energy
 #from tqdm import tqdm
 from dotenv import load_dotenv
@@ -21,25 +22,29 @@ screen			 = None
 threads = list()
 abort_threads = False
 
-logging.basicConfig(filename='sense-debug.log',level=logging.DEBUG)
+logging.basicConfig(filename='sense-debug.log')
 log = logging.getLogger('senseshow.main')
 
 def main():
+	log.info("Sense show starting...")
 	signal.signal(signal.SIGINT, exit_gracefully)
 	signal.signal(signal.SIGTERM, exit_gracefully)
 
 	load_dotenv()
+	LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
+	log.setLevel(LOGLEVEL)
+	log.info("Log level: %s",LOGLEVEL)
 
 	launchAndWait()
 
-	log.info("all done")
+	log.info("Program ended")
 
 def launchAndWait():
 	global led_panel, abort_threads, threads, screen, data_queue
 
 	log.info("Launching threads")
 	
-	data_queue    = LifoQueue(maxsize=5)
+	data_queue    = Queue(maxsize=5)
 	screen = oled.OLED()
 	led_panel = led_strip.LedStrip()
 
@@ -83,50 +88,57 @@ def update_sense_data():
 		user = os.getenv("SENSE_USER")
 		passwd = os.getenv("SENSE_PASSWD")	
 		sense = sense_energy.Senseable()
-		sense.rate_limit=10
+		sense.rate_limit=4 #seconds to wait between updating data from sense (they block more than 1/second from all sources for a user)
 		sense.authenticate(user,passwd)
 		while True:
-			global abort_threads, data_queue
-			if abort_threads:
-				log.info("Abort threads true, exiting Sense loop")
-				break
 			try:
+				log.info("Establishing realtime API feed....")
 				sense.update_realtime()
-				data = sense.get_realtime()
-				data_queue.put_nowait(data)
-				if data_queue.qsize() > 1:
-					log.debug("Queue size is %d", data_queue.qsize())
-			except Full:
-				log.debug("update_sense_data: Queue full, skipping write.")
-				time.sleep(2)
-				pass
+				feed = sense.get_realtime_stream()
+				while True:	
+					global abort_threads, data_queue
+					if abort_threads:
+						log.info("Abort threads true, exiting Sense loop")
+						return
+					try:
+						log.debug("reading live feed")
+						data = next(feed)
+						data_queue.put_nowait(data)
+						if data_queue.qsize() > 1:
+							log.debug("Queue size is %d", data_queue.qsize())
+					except StopIteration:
+						log.info("exhausted raltime feed, request another")
+						break
+					except Full:
+						#log.debug("update_sense_data: Queue full, skipping write.")
+						pass
 			except:
-				log.exception("update_sense_data: Error in Sense library call")
+				log.warning("Sense library error, likely too many api calls")
+				time.sleep(2)
 				pass
 	except:
 		log.exception("Exception in sense thread")
 		halt_threads()
 
 def update_led_panel():
-	try:
-		global data_queue, led_panel
-		#solar = tqdm(total=max_solar, unit="watts",desc="From Solar", miniters=1, position=0, unit_scale=True, leave=True)
-		#use = tqdm(total=max_use, unit="watts",desc="Consumption",miniters=1, position=1, unit_scale=True, leave=True)
-		#grid = tqdm(total=max_use, unit="watts",desc="From Grid",miniters=1, position=2, unit_scale=True, leave=True)
+	try:		 
 		while True:
-			global abort_threads
+			global abort_threads, led_panel, data_queue
 			if abort_threads:
 				log.info("Abort threads true, exiting Display loop")
 				break
 			try:
 				# non-blocking, if empty it jumps to exception
 				data = data_queue.get_nowait()
-				# log.debug("Display Data From: {}".format(time.ctime(data['epoch'])))
-				# Set console indicators	
-				# set_tqdm(solar,data['d_solar_w'])
-				# set_tqdm(use,data['d_w'])
-				# set_tqdm(grid,data['grid_w'])
-
+				data_queue.task_done()
+				log.debug("Display Data From: {}".format(time.ctime(data['epoch'])))
+				
+				now = time.time()
+				if now - data['epoch'] > 20: #clocks will diverge a few seconds, so dont se too low
+					log.warn("Time lagging > 1 minute, discarding")
+					log.info("now: %d", now)
+					log.info("data: %d",data['epoch'])
+					continue
 				data['max_solar'] = max_solar
 				data['max_use'] = max_use
 				screen.present(data)
@@ -141,10 +153,12 @@ def update_led_panel():
 					# making energy, flow starts at paenl (even if grid also feeds in)
 					led_panel.flow_solar(data['d_solar_w'], max_solar)
 					led_panel.flow_grid(data['grid_w'], max_use)
-				data_queue.task_done()
-			except:
+			except Empty:
 				log.debug("Empty queue for display, loop continue")
 				time.sleep(.5)
+			except:
+				log.exception("Unknown exceoption")
+				raise
 	except:
 		log.exception("uncaught exception in display thread")
 		halt_threads()

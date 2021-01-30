@@ -5,7 +5,7 @@ After=nss-lookup.target
 
 
 [Service]
-ExecStart=/home/pi/sense-show/start.sh
+ExecStart=/home/pi/sense-show/raspberrypi/start.sh
 WorkingDirectory=/home/pi/sense-show
 StandardOutput=inherit
 StandardError=inherit
