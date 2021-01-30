@@ -29,10 +29,13 @@ def main():
 	log.info("Sense show starting...")
 	signal.signal(signal.SIGINT, exit_gracefully)
 	signal.signal(signal.SIGTERM, exit_gracefully)
+	signal.signal(signal.SIGUSR1, print_status)
+	signal.signal(signal.SIGQUIT, print_status_tty)
 
 	load_dotenv()
 	LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
 	log.setLevel(LOGLEVEL)
+	log.info("Process PID: %d", os.getpid())
 	log.info("Log level: %s",LOGLEVEL)
 
 	launchAndWait()
@@ -82,6 +85,31 @@ def exit_gracefully(signum, frame):
 	time.sleep(1)
 
 
+def print_status_tty(signum, frame):
+	print("Stats printed to log. To stop use ctrl+c")
+	print_status(signum,frame)
+
+'''
+ Eats a data point and prints some sstats
+'''
+def print_status(signum, frame):
+	log.warning("SIG 30 receieved, pulling data for stats")
+	global abort_threads, led_panel, data_queue
+	try:
+		# for stats it can be blocking since bg threads are still doing their thing
+		data = data_queue.get()
+		data_queue.task_done()
+		now = time.time()
+		log.info("depth: %d", data_queue.qsize())
+		log.info("now: %d", now)
+		log.info("data's: %d",data['epoch'])
+		log.info("grid w: %s",data['grid_w'])
+		log.info("solar w: %s",data['d_solar_w'])
+		log.info("using: %s",data['d_w'])
+		#log.info("%s",data)
+	except:
+		log.exception("Unknown exceoption")
+		raise
 
 def update_sense_data():
 	try:
@@ -173,5 +201,7 @@ def set_tqdm(instance, new_value):
 
 
 if __name__ == '__main__':
-	print('Sense Show Starting...')
+	print('Sense Show Starting as PID: ',os.getpid())
+	print('crtl+\\ will print stats to the log file @ sense-debug.log')
+	print('ctrl+c will gracefully exit')
 	main()
