@@ -74,7 +74,7 @@ class SenseTrend():
 	# Sense decided instead of accepting timezones, you have to muck the start hour to incorpoarte TC offset.
 	def get_sense_start(self):
 		is_dst = time.daylight and time.localtime().tm_isdst > 0
-		utc_offset =  (time.altzone if is_dst else time.timezone)
+		utc_offset =  time.timezone#(time.altzone if is_dst else time.timezone)
 		print("Local utc offset including DST imapct is : " + str(utc_offset))
 		return self.start + datetime.timedelta(seconds = utc_offset)
 
