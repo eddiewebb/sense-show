@@ -3,9 +3,8 @@ import signal
 import time
 import threading
 import logging
-from queue import Queue
+from queue import LifoQueue
 from queue import Full
-from collections import deque
 import sense_energy
 #from tqdm import tqdm
 from dotenv import load_dotenv
@@ -16,7 +15,7 @@ import oled
 max_solar 	   = 10000
 max_use   	   = 10000
 flip_iterations= 5
-data_queue    = Queue()
+data_queue    = None
 led_panel        = None
 screen			 = None
 threads = list()
@@ -36,11 +35,11 @@ def main():
 	log.info("all done")
 
 def launchAndWait():
-	global led_panel, abort_threads, threads, screen
+	global led_panel, abort_threads, threads, screen, data_queue
 
 	log.info("Launching threads")
 	
-	data_queue    = Queue(5)
+	data_queue    = LifoQueue(maxsize=5)
 	screen = oled.OLED()
 	led_panel = led_strip.LedStrip()
 
@@ -81,31 +80,29 @@ def exit_gracefully(signum, frame):
 
 def update_sense_data():
 	try:
-		global data_queue, led_panel
 		user = os.getenv("SENSE_USER")
 		passwd = os.getenv("SENSE_PASSWD")	
 		sense = sense_energy.Senseable()
 		sense.rate_limit=10
 		sense.authenticate(user,passwd)
 		while True:
-			global abort_threads
+			global abort_threads, data_queue
 			if abort_threads:
 				log.info("Abort threads true, exiting Sense loop")
 				break
 			try:
 				sense.update_realtime()
 				data = sense.get_realtime()
-				#qDepth = solar_queue.qsize() + data_queue.qsize()
-				#if qDepth > 0:
-				#	tqdm.write("Queuedepth: " + str(qDepth))
-				data_queue.put(data)
+				data_queue.put_nowait(data)
+				if data_queue.qsize() > 1:
+					log.debug("Queue size is %d", data_queue.qsize())
 			except Full:
-				log.warn("update_sense_data: Queue full, skipping write.")
+				log.debug("update_sense_data: Queue full, skipping write.")
+				time.sleep(2)
 				pass
 			except:
 				log.exception("update_sense_data: Error in Sense library call")
 				pass
-			time.sleep(1.1)
 	except:
 		log.exception("Exception in sense thread")
 		halt_threads()
@@ -146,7 +143,7 @@ def update_led_panel():
 					led_panel.flow_grid(data['grid_w'], max_use)
 				data_queue.task_done()
 			except:
-				log.info("Empty queue for display, loop continue")
+				log.debug("Empty queue for display, loop continue")
 				time.sleep(.5)
 	except:
 		log.exception("uncaught exception in display thread")
