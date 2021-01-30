@@ -3,7 +3,7 @@
 sudo apt-get install -y python3 python3-pip python3-smbus python3-pil
 sudo apt-get install -y i2c-tools
 sudo pip3 install --upgrade setuptools
-sudo pip3 install -r ../requirements.txt
+sudo pip3 install -r ../src/requirements.txt
 
 # sense websockets dont support TLS 2
 #CipherString = DEFAULT@SECLEVEL=2 --> 1
@@ -15,7 +15,7 @@ sudo systemctl enable senseshow.service
 
 
 ## send pvoutput data
-echo "*/5 * * * *  python3 $(pwd)/pvoutput.py" | sudo crontab -
+echo "*/5 * * * *  python3 $(pwd)/src/pvoutput.py" | sudo crontab -
 
 
 
