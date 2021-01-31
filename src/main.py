@@ -88,7 +88,7 @@ def print_status_tty(signum, frame):
  Eats a data point and prints some sstats
 '''
 def print_status(signum, frame):
-	log.warning("SIG 30 receieved, pulling data for stats")
+	log.warning("SIG USR1 receieved, pulling data for stats")
 	global abort_threads, led_panel, data_queue
 	try:
 		# for stats it can be blocking since bg threads are still doing their thing
