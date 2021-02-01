@@ -115,31 +115,30 @@ def update_sense_data():
 		sense.rate_limit=4 #seconds to wait between updating data from sense (they block more than 1/second from all sources for a user)
 		sense.authenticate(user,passwd)
 		while True:
-			try:
-				log.info("Establishing realtime API feed....")
-				feed = sense.get_realtime_stream()
-				while True:	
-					global abort_threads, data_queue
-					if abort_threads:
-						log.info("Abort threads true, exiting Sense loop")
-						return
-					try:
-						log.debug("reading live feed")
-						data = next(feed)
-						data_queue.put_nowait(data)
-					except StopIteration:
-						# i dont think we'll ever hit this
-						log.info("exhausted realtime feed, renew API")
-						break
-					except Full:
-						log.debug("update_sense_data: Queue full, dump oldest.")
-						data_queue.get_nowait()
-						data_queue.put_nowait(data)
-						pass
-			except:
-				log.warning("Sense library error, likely too many api calls")
-				time.sleep(2)
-				pass
+			log.info("Establishing realtime API feed....")
+			feed = sense.get_realtime_stream()
+			while True:	
+				global abort_threads, data_queue
+				if abort_threads:
+					log.info("Abort threads true, exiting Sense loop")
+					return
+				try:
+					log.debug("reading live feed")
+					data = next(feed)
+					data_queue.put_nowait(data)
+				except StopIteration:
+					# i dont think we'll ever hit this
+					log.info("exhausted realtime feed, renew API")
+					break
+				except Full:
+					log.debug("update_sense_data: Queue full, dump oldest.")
+					data_queue.get_nowait()
+					data_queue.put_nowait(data)
+					pass
+				except Exception as err:
+					log.exception("Unexpected error during realtime read loop")
+					time.sleep(2)
+					break
 	except:
 		log.exception("Exception in sense thread")
 		halt_threads()
