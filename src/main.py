@@ -117,7 +117,6 @@ def update_sense_data():
 		while True:
 			try:
 				log.info("Establishing realtime API feed....")
-				sense.update_realtime()
 				feed = sense.get_realtime_stream()
 				while True:	
 					global abort_threads, data_queue
@@ -129,12 +128,12 @@ def update_sense_data():
 						data = next(feed)
 						data_queue.put_nowait(data)
 					except StopIteration:
-						log.info("exhausted realtime feed, request another")
-						data_queue.queue.clear()
+						# i dont think we'll ever hit this
+						log.info("exhausted realtime feed, renew API")
 						break
 					except Full:
-						log.debug("update_sense_data: Queue full, nuking.")
-						data_queue.queue.clear()
+						log.debug("update_sense_data: Queue full, dump oldest.")
+						data_queue.get_nowait()
 						data_queue.put_nowait(data)
 						pass
 			except:
