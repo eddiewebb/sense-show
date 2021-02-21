@@ -55,6 +55,10 @@ class OLED:
 			# black box to clear every so often
 			log.debug("Blacking screen to prevent burn in")
 			draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
+		if now % 300 == 0:
+			# black box to clear every so often
+			log.debug("Whiting screen to prevent burn in")
+			draw.rectangle((0, 0, self.width, self.height), outline=1, fill=1)
 		else:
 			self.draw_charts(draw, sense_data)
 		self.oled.image(image)
