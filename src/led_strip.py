@@ -196,11 +196,9 @@ class LedStrip:
 	def draw_panels(self):
 		for x in SOLAR:
 			for y in reversed(range(1,9)):
-				if x == 30 and y < 5:
+				if x in (32,31) and y in(3,6,9):
 					self.mark(x,y,self.color_gray)
-				if x == 31 and y in (3,4,5,6):
-					self.mark(x,y,self.color_gray)
-				if x == 32 and y in (5,6,7,8):
+				if x in (31,30) and y in (2,5,8):
 					self.mark(x,y,self.color_gray)
 		self.pixels.show()
 

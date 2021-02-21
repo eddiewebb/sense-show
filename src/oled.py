@@ -1,4 +1,5 @@
 import os
+import time
 from math import ceil
 import logging
 from PIL import Image, ImageFont, ImageDraw
@@ -48,9 +49,18 @@ class OLED:
 	def present(self, sense_data):
 		image = Image.new('1', (self.width, self.height))
 		draw = ImageDraw.Draw(image)
-		self.draw_charts(draw, sense_data)
-		self.oled.image(image)
-		self.oled.show()
+		if time.time() % 10 == 0:
+			# black box to clear every so often
+			log.info("Blacking screen to prevent burn in")
+			draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
+			time.sleep(1)
+			draw.rectangle((0, 0, self.width, self.height), outline=1, fill=1)
+			time.sleep(1)
+			draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
+		else:
+			self.draw_charts(draw, sense_data)
+			self.oled.image(image)
+			self.oled.show()
 
 	def draw_charts(self, draw, sense_data):
 		y_start=21
