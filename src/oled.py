@@ -49,6 +49,8 @@ class OLED:
 	def present(self, sense_data):
 		image = Image.new('1', (self.width, self.height))
 		draw = ImageDraw.Draw(image)
+		now = time.time()
+		log.info(now)
 		if time.time() % 10 == 0:
 			# black box to clear every so often
 			log.info("Blacking screen to prevent burn in")
