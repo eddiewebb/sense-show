@@ -50,10 +50,10 @@ class OLED:
 		image = Image.new('1', (self.width, self.height))
 		draw = ImageDraw.Draw(image)
 		now = int(time.time())
-		log.info(now)
-		if now % 10 == 0:
+		log.debug(now)
+		if now % 60 == 0:
 			# black box to clear every so often
-			log.info("Blacking screen to prevent burn in")
+			log.debug("Blacking screen to prevent burn in")
 			draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
 		else:
 			self.draw_charts(draw, sense_data)
