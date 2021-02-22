@@ -55,14 +55,9 @@ class OLED:
 		image = Image.new('1', (self.width, self.height))
 		draw = ImageDraw.Draw(image)
 		now = int(time.time())
-		log.debug(now)
-		if now % 300 == 0:
+		if now % 10 == 0:
 			# black box to clear every so often
-			log.info("Whiting screen to prevent burn in")
-			draw.rectangle((0, 0, self.width, self.height), outline=1, fill=1)
-		elif now % 60 == 0:
-			# black box to clear every so often
-			log.info("Blacking screen to prevent burn in")
+			log.debug("Blacking screen to prevent burn in")
 			draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
 		else:
 			self.draw_charts(draw, sense_data)
@@ -98,7 +93,6 @@ class OLED:
 			self.wheel_index = 0
 		elif self.wheel_index < 0:
 			self.wheel_index = self.max_wheel_index
-		log.info(self.wheel_index)
 		x1 = self.wheel_index * self.indicator_width
 		x2 = x1 +  self.indicator_width
 		#fill value left and or right with white 

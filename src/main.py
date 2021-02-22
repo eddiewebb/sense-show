@@ -122,6 +122,14 @@ def update_sense_data():
 				if abort_threads:
 					log.info("Abort threads true, exiting Sense loop")
 					return
+
+				hour = time.localtime().tm_hour
+				if hour >= 19 or hour < 7:
+					log.debug("off hours, sleep")
+					global led_panel
+					led_panel.reset()
+					time.sleep(5)
+					continue
 				try:
 					log.debug("reading live feed")
 					data = next(feed)
@@ -158,6 +166,7 @@ def update_led_panel():
 				log.debug("Display Data From: {}".format(time.ctime(data['epoch'])))
 				
 				now = time.time()
+
 				if now - data['epoch'] > 20: #clocks will diverge a few seconds, so dont se too low
 					log.warn("Time lagging > 20 seconds, discarding")
 					log.info("now: %d", now)
