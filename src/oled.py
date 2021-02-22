@@ -97,8 +97,8 @@ class OLED:
 		if self.wheel_index > self.max_wheel_index:
 			self.wheel_index = 0
 		elif self.wheel_index < 0:
-			self.wheel_index = max_wheel_index
-		log.info(wheel_index)
+			self.wheel_index = self.max_wheel_index
+		log.info(self.wheel_index)
 		x1 = self.wheel_index
 		x2 = self.wheel_index +  self.indicator_width
 		#fill value left and or right with white 
