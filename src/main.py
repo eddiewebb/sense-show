@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 import led_strip
 import oled
 
-
+sleeping = False
 max_solar 	   = 10000
 max_use   	   = 10000
 flip_iterations= 5
@@ -124,13 +124,19 @@ def update_sense_data():
 					return
 
 				hour = time.localtime().tm_hour
+				global sleeping
 				if hour >= 19 or hour < 7:
-					log.info("off hours, sleeping...")
-					global led_panel, screen
-					led_panel.clear()
-					screen.clear()
-					time.sleep(5)
+					if not sleeping:
+						log.info("off hours, sleeping...")
+						sleeping = True					
+						global led_panel, screen
+						led_panel.clear()
+						screen.clear()
+					time.sleep(4)
 					continue
+				else:
+					log.info("on hours, waking.. may need new connection")
+					sleeping = False
 				try:
 					log.debug("reading live feed")
 					data = next(feed)
