@@ -91,13 +91,14 @@ class OLED:
 			# we are consuming, meter spins normal >>>>
 			# draw triangle poiinting left
 			self.wheel_index += 1
-		elif sense_data['d_solar_w'] < 0:
+		elif sense_data['grid_w'] < 0:
 			#we're giving back <<<<<<
 			self.wheel_index -= 1
 		if self.wheel_index > self.max_wheel_index:
 			self.wheel_index = 0
 		elif self.wheel_index < 0:
 			self.wheel_index = max_wheel_index
+		log.info(wheel_index)
 		x1 = self.wheel_index
 		x2 = self.wheel_index +  self.indicator_width
 		#fill value left and or right with white 
