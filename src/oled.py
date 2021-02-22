@@ -99,8 +99,8 @@ class OLED:
 		elif self.wheel_index < 0:
 			self.wheel_index = self.max_wheel_index
 		log.info(self.wheel_index)
-		x1 = self.wheel_index
-		x2 = self.wheel_index +  self.indicator_width
+		x1 = self.wheel_index * self.indicator_width
+		x2 = x1 +  self.indicator_width
 		#fill value left and or right with white 
 		draw.rectangle((x1, y1, x2, y2),outline=1, fill=1)	
 
