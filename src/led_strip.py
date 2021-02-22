@@ -35,6 +35,11 @@ class LedStrip:
 		log.debug("intializinfg LED matrix..")
 		# Startup
 		self.set_pixels()
+		self.initialize()
+
+
+	def initialize(self):
+		log.debug("pixels initializing")
 		self.flow(1,32,8000,8000,self.color_teal, False)
 		self.flow(32,1,8000,8000,self.color_purple, False)
 		self.waterfall(1,8)
@@ -46,11 +51,6 @@ class LedStrip:
 		self.draw_plug()
 
 		log.debug("LED ready!")
-
-
-	def reset(self):
-		log.debug("pixels reset")
-		self.set_pixels()
 
 
 	def set_pixels(self):	

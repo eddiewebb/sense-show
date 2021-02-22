@@ -7,7 +7,6 @@ from queue import Queue
 from queue import Full
 from queue import Empty
 import sense_energy
-#from tqdm import tqdm
 from dotenv import load_dotenv
 import led_strip
 import oled
@@ -134,9 +133,10 @@ def update_sense_data():
 						screen.clear()
 					time.sleep(4)
 					continue
-				else:
+				elif sleeping:
 					log.info("on hours, waking.. may need new connection")
 					sleeping = False
+					led_panel.initialize()
 				try:
 					log.debug("reading live feed")
 					data = next(feed)
@@ -202,12 +202,6 @@ def update_led_panel():
 	except:
 		log.exception("uncaught exception in display thread")
 		halt_threads()
-
-
-def set_tqdm(instance, new_value):
-		instance.reset()
-		instance.update(new_value)
-		instance.refresh()
 
 
 if __name__ == '__main__':
