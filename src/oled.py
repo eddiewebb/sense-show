@@ -46,8 +46,7 @@ class OLED:
 		self.oled.show()
 
 	def clear(self):
-		draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
-		self.oled.image(image)
+		self.oled.fill(0)
 		self.oled.show()
 
 
@@ -58,7 +57,7 @@ class OLED:
 		if now % 10 == 0:
 			# black box to clear every so often
 			log.debug("Blacking screen to prevent burn in")
-			draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
+			self.clear()
 		else:
 			self.draw_charts(draw, sense_data)
 		self.oled.image(image)
