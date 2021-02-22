@@ -11,6 +11,11 @@ class OLED:
 
 	width = 128
 	height = 32
+	wheel_index = 0
+	max_wheel_index = 16
+	indicator_width = width / max_wheel_index
+
+
 	def __init__(self):
 		# Startup
 		self.config()
@@ -78,23 +83,25 @@ class OLED:
 		draw.text((self.width - pixs[0],10), text, font=self.font, fill=1)
 
 		# draw full empty box
-		draw.rectangle((0,y_start, self.width-1, y_start + height),outline=1, fill=0)		
+		draw.rectangle((0,y_start, self.width-1, y_start + height),outline=1, fill=0)	
+
 		y1 = y_start
 		y2 = y_start + height
-		x1 = x2 = self.width/2
 		if sense_data['grid_w'] > 0:
-			# we are consuming, show bar starting left of center
-			x1 = x1 - self.pixel_width_of(sense_data['grid_w'], sense_data['max_use'], width)
+			# we are consuming, meter spins normal >>>>
 			# draw triangle poiinting left
-			draw.pieslice((x1-height,y_start,x1,y_start+height),315,45, fill=1, outline=1)
-		if sense_data['d_solar_w'] > 0:
-			#we're not consuing, we shouldbe prodincg
-			x2 = x2 + self.pixel_width_of(sense_data['d_solar_w'], sense_data['max_solar'],width)
-			draw.pieslice((x2,y_start,x2+height,y_start+height),135,225, fill=1, outline=1)
+			self.wheel_index ++
+		elif sense_data['d_solar_w'] < 0:
+			#we're giving back <<<<<<
+			self.wheel_index --
+		if self.wheel_index > self.max_wheel_index:
+			self.wheel_index = 0
+		elif self.wheel_index < 0:
+			self.wheel_index = max_wheel_index
+		x1 = self.wheel_index
+		x2 = self.wheel_index +  self.indicator_width
 		#fill value left and or right with white 
 		draw.rectangle((x1, y1, x2, y2),outline=1, fill=1)	
-		# center line
-		draw.line((64,y_start, 64, y_start+height), fill=0, width=2)
 
 	def pixel_width_of(self, val, max, width):
 		return ceil((val / max)*width)
