@@ -126,8 +126,9 @@ def update_sense_data():
 				hour = time.localtime().tm_hour
 				if hour >= 19 or hour < 7:
 					log.debug("off hours, sleep")
-					global led_panel
-					led_panel.reset()
+					global led_panel, screen
+					led_panel.clear()
+					screen.clear()
 					time.sleep(5)
 					continue
 				try:

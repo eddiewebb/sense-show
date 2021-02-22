@@ -44,13 +44,13 @@ class OLED:
 		draw.text((10,0), text, font=self.font, fill=255)
 		self.oled.image(image)
 		self.oled.show()
-	"""
-	Usage:  XXX
-	Grid:          Solar: 
-	[.       <||||||||>.            ]
+
+	def clear(self):
+		draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
+		self.oled.image(image)
+		self.oled.show()
 
 
-	"""
 	def present(self, sense_data):
 		image = Image.new('1', (self.width, self.height))
 		draw = ImageDraw.Draw(image)
