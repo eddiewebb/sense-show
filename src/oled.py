@@ -47,6 +47,7 @@ class OLED:
 
 	def clear(self):
 		self.oled.fill(0)
+		self.oled.show()
 
 
 	def present(self, sense_data):
