@@ -127,7 +127,9 @@ def update_sense_data():
 				if hour >= 19 or hour < 7:
 					if not sleeping:
 						log.info("off hours, sleeping...")
-						sleeping = True					
+						sleeping = True
+						data_queue.queue.clear()
+						time.sleep(1) #existing process may be updateing led/screen			
 						global led_panel, screen
 						led_panel.clear()
 						screen.clear()
