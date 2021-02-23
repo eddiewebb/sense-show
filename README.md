@@ -102,11 +102,19 @@ If things seem slow, stale you shouldn set `LOGLEVEL=DEBUG` in the `.env` and al
 
 ## pvoutput.org support.
 
-I also added live updates froma. related project.
+I also added live updates from a [related project](https://github.com/eddiewebb/sense-to-pvoutput) to **use sense data to send generation and consumption data to pvoutput.org** .
 
-set tjese values in `.env`
+set these values in `.env`
 
 ```
 PVOUTPUT_KEY="yourkeyfrom pvoutput.org"
 PVOUTPUT_ID="siteid"
 ```
+
+and then set a cron to run the pvoutput.py
+
+```
+*/5 * * * *  python3 /home/pi/sense-show/src/pvoutput.py
+```
+
+![PVPutput screenshow with 5 minute interval](/assets/pvoutput.png)
