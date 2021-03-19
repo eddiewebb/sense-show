@@ -5,5 +5,5 @@ aiohttp==3.6.2
 sense-energy==0.8.1
 python-dotenv==0.10.5
 adafruit-circuitpython-ssd1306==2.7.3
-Pillow==8.1.0
+Pillow==8.1.1
 blessings==1.7
