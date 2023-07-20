@@ -1,7 +1,7 @@
 RPi.GPIO==0.7.0
 Adafruit-Blinka==3.7.1
 adafruit-circuitpython-neopixel==4.1.0
-aiohttp==3.7.4
+aiohttp==3.8.5
 sense-energy==0.8.1
 python-dotenv==0.10.5
 adafruit-circuitpython-ssd1306==2.7.3
